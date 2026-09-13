@@ -44,7 +44,7 @@ function TicketCard({ tier, ticket, nickname }: { tier: 7 | 13; ticket?: Ticket;
               <>굿즈 수령 완료 · {hhmm(ticket.goods_claimed_at)}</>
             ) : (
               <>
-                굿즈는 총학생회 본부에서 <b>{nickname}</b> 이름을 말하고 받으세요.
+                굿즈는 총학생회 본부에서 수령 가능합니다.
               </>
             )}
           </div>

@@ -10,35 +10,39 @@ import type {
 
 /* ---------------- 인증 ---------------- */
 
-export async function signUp(nickname: string, pin: string) {
-  const email = nicknameToEmail(nickname);
+/**
+ * 시작하기 버튼 하나로 처리한다.
+ *  - 처음이면 계정을 만들고,
+ *  - 이미 쓰던 닉네임이면 같은 비밀번호로 이어서 들어간다.
+ * 기기를 바꾸거나 캐시를 지운 사람도 똑같이 닉네임+비밀번호만 넣으면 복구된다.
+ */
+export async function startOrResume(nickname: string, pin: string) {
+  const nick = nickname.trim();
+  const email = nicknameToEmail(nick);
+
   const { data, error } = await supabase.auth.signUp({ email, password: pin });
-  if (error) {
-    // 이미 가입된 닉네임이면 Supabase 가 이 에러를 돌려준다.
-    if (/already/i.test(error.message)) {
-      throw new Error("이미 사용 중인 닉네임입니다. 이어하기로 들어와 주세요.");
+
+  // 이미 있는 닉네임. Supabase 는 설정에 따라 에러를 주기도 하고,
+  // 이메일 열거 방지 때문에 세션 없는 응답을 주기도 해서 둘 다 처리한다.
+  const taken = !!error && /already|registered|exists/i.test(error.message);
+  if (taken || (!error && !data.session)) {
+    const { error: inErr } = await supabase.auth.signInWithPassword({ email, password: pin });
+    if (inErr) {
+      throw new Error(
+        "이미 쓰고 있는 닉네임입니다. 본인 것이면 비밀번호를 확인하고, 아니면 다른 닉네임을 써 주세요."
+      );
     }
-    throw new Error(error.message);
+    return; // 기존 계정으로 이어하기 성공
   }
+
+  if (error) throw new Error(error.message);
   if (!data.user) throw new Error("계정을 만들지 못했습니다. 다시 시도해 주세요.");
 
   const { error: pErr } = await supabase
     .from("profiles")
-    .insert({ id: data.user.id, nickname: nickname.trim() });
-  if (pErr) {
-    if (pErr.code === "23505") throw new Error("이미 사용 중인 닉네임입니다.");
-    throw new Error(pErr.message);
-  }
-  return data.user;
-}
-
-export async function signIn(nickname: string, pin: string) {
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email: nicknameToEmail(nickname),
-    password: pin,
-  });
-  if (error) throw new Error("닉네임 또는 비밀번호가 맞지 않습니다.");
-  return data.user;
+    .insert({ id: data.user.id, nickname: nick });
+  // 23505 = 닉네임 중복. 위에서 이어하기로 걸러지므로 여기 오면 드문 경합 상황이다.
+  if (pErr && pErr.code !== "23505") throw new Error(pErr.message);
 }
 
 export async function myNickname(): Promise<string | null> {

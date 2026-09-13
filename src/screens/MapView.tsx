@@ -196,7 +196,7 @@ export default function MapView({ booths, stamps, onPick }: Props) {
         ))}
 
         <Inert x={374} y={1240} w={86} h={100} label="술" sub="판매" />
-        <Inert x={576} y={1240} w={86} h={100} label="일화" sub="→ 24번" />
+        <Inert x={576} y={1240} w={86} h={100} label="일화"/>
 
         <rect x={40} y={1368} width={380} height={40} rx={6} fill="none" stroke="var(--line)" strokeWidth={2} />
         <text x={230} y={1394} fontSize={24} textAnchor="middle" fill="var(--muted)">
