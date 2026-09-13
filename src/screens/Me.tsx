@@ -10,7 +10,7 @@ interface Props {
   onOpenAdmin: () => void;
 }
 
-function TicketCard({ tier, ticket, nickname }: { tier: 7 | 13; ticket?: Ticket; nickname: string }) {
+function TicketCard({ tier, ticket }: { tier: 7 | 13; ticket?: Ticket }) {
   const label = `${tier}회 응모권`;
 
   if (!ticket) {
@@ -85,8 +85,8 @@ export default function Me({
         <div className="v">{nickname}</div>
       </div>
 
-      <TicketCard tier={7} ticket={t7} nickname={nickname} />
-      <TicketCard tier={13} ticket={t13} nickname={nickname} />
+      <TicketCard tier={7} ticket={t7} />
+      <TicketCard tier={13} ticket={t13} />
 
       <div>
         <div className="sechead" style={{ marginBottom: 8 }}>

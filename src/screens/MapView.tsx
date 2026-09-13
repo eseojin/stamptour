@@ -17,6 +17,7 @@ function Inert({
   h,
   label,
   sub,
+  fs = 26,
 }: {
   x: number;
   y: number;
@@ -24,6 +25,8 @@ function Inert({
   h: number;
   label: string;
   sub?: string;
+  /** 글자 크기. 블록이 커지면 같이 키운다 */
+  fs?: number;
 }) {
   return (
     <g>
@@ -39,15 +42,21 @@ function Inert({
       />
       <text
         x={x + w / 2}
-        y={y + h / 2 + (sub ? -2 : 9)}
-        fontSize={26}
+        y={y + h / 2 + (sub ? -fs * 0.18 : fs * 0.35)}
+        fontSize={fs}
         textAnchor="middle"
         fill="var(--muted)"
       >
         {label}
       </text>
       {sub && (
-        <text x={x + w / 2} y={y + h / 2 + 26} fontSize={21} textAnchor="middle" fill="var(--muted)">
+        <text
+          x={x + w / 2}
+          y={y + h / 2 + fs * 0.95}
+          fontSize={fs * 0.8}
+          textAnchor="middle"
+          fill="var(--muted)"
+        >
           {sub}
         </text>
       )}
@@ -166,13 +175,14 @@ export default function MapView({ booths, stamps, onPick }: Props) {
 
   return (
     <div className="mapwrap">
-      <svg viewBox={`0 0 ${VW} ${VH}`} role="img" aria-label="달빛제 부스 배치도">
+      {/* 부스 좌표는 VH(1430) 기준 비율이라 VH 는 그대로 두고,
+          총학생회 본부 블록이 아래 끝에 붙지 않도록 viewBox 에만 여백을 더한다 */}
+      <svg viewBox={`0 0 ${VW} ${VH + 26}`} role="img" aria-label="달빛제 부스 배치도">
         <Inert x={40} y={34} w={210} h={58} label="달성군 보건소" />
         <rect x={300} y={26} width={330} height={74} rx={8} fill="none" stroke="var(--ink-2)" strokeWidth={2} />
         <text x={465} y={72} fontSize={34} textAnchor="middle" fill="var(--ink-2)" letterSpacing={4}>
           STAGE
         </text>
-        <line x1={465} y1={112} x2={465} y2={1200} stroke="var(--line)" strokeWidth={2} strokeDasharray="9 9" />
 
         {legend.map(([label, key], i) => (
           <g key={key} transform={`translate(348 ${560 + i * 46})`}>
@@ -195,18 +205,20 @@ export default function MapView({ booths, stamps, onPick }: Props) {
           <Chip key={b.id} booth={b} no={i + 1} done={stamps.has(b.id)} onPick={() => onPick(b)} />
         ))}
 
-        <Inert x={374} y={1240} w={86} h={100} label="술" sub="판매" />
+        <Inert x={374} y={1240} w={86} h={100} label="술" />
         <Inert x={576} y={1240} w={86} h={100} label="일화"/>
 
-        <rect x={40} y={1368} width={380} height={40} rx={6} fill="none" stroke="var(--line)" strokeWidth={2} />
-        <text x={230} y={1394} fontSize={24} textAnchor="middle" fill="var(--muted)">
+        <rect x={40} y={1368} width={340} height={40} rx={6} fill="none" stroke="var(--line)" strokeWidth={2} />
+        <text x={210} y={1394} fontSize={24} textAnchor="middle" fill="var(--muted)">
           관람석
         </text>
-        <rect x={510} y={1368} width={330} height={40} rx={6} fill="none" stroke="var(--line)" strokeWidth={2} />
-        <text x={675} y={1394} fontSize={24} textAnchor="middle" fill="var(--muted)">
+        <rect x={560} y={1368} width={280} height={40} rx={6} fill="none" stroke="var(--line)" strokeWidth={2} />
+        <text x={700} y={1394} fontSize={24} textAnchor="middle" fill="var(--muted)">
           관람석
         </text>
-        <Inert x={424} y={1358} w={82} h={60} label="총학" sub="본부" />
+
+        {/* 굿즈를 받는 곳이라 눈에 띄어야 한다. 관람석 위아래로 걸치게 크게 둔다 */}
+        <Inert x={390} y={1338} w={160} h={90} label="총학생회" fs={30} />
       </svg>
     </div>
   );

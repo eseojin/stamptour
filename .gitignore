@@ -2,3 +2,10 @@ node_modules
 dist
 .env
 .env.local
+
+# vite 가 TS 설정을 읽을 때 만드는 임시 파일
+vite.config.ts.timestamp-*
+
+# 토큰이 평문으로 들어간 테스트용 QR — 커밋 금지
+qr-test.html
+seed_booths.sql

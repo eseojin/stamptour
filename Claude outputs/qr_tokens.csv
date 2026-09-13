@@ -1,0 +1,25 @@
+﻿번호,부스ID,부스명,분류,수동입력코드,QR토큰,배포 후 QR에 넣을 값
+1,food-01,꼬치에 반하다,food,E6E7PS,3362d155228535fd40592c34bd859c60,https://<도메인>/s/3362d155228535fd40592c34bd859c60
+2,food-02,생자회 휴게소,food,SDKK3A,4f1ea8e084d33e4560f25c0324620595,https://<도메인>/s/4f1ea8e084d33e4560f25c0324620595
+3,food-03,가배향해(海),food,WRXHBV,7d756363e05a7ee1d5bf375d021ddb3f,https://<도메인>/s/7d756363e05a7ee1d5bf375d021ddb3f
+4,food-04,달빛 볼링장,food,UAFT8W,54f644a5dee97d94cd118656b6c3e89c,https://<도메인>/s/54f644a5dee97d94cd118656b6c3e89c
+5,food-05,꿈빛 빵티시엘,food,23Y2XQ,285032504fcf59b671760e9210e6e68a,https://<도메인>/s/285032504fcf59b671760e9210e6e68a
+6,food-06,불타는 타코야끼,food,9S6RDN,20b78d94f4c29003c201a2a082c9904d,https://<도메인>/s/20b78d94f4c29003c201a2a082c9904d
+7,food-07,Holy Table,food,FDCD7F,d00f391248f8eb59ce3c800fd749707b,https://<도메인>/s/d00f391248f8eb59ce3c800fd749707b
+8,food-08,H2O+Pt (팥),food,J8MTAU,b323cba9bb98d4cd4b24a596b6f95aac,https://<도메인>/s/b323cba9bb98d4cd4b24a596b6f95aac
+9,food-09,DISA,food,ZSFW2P,768e570e8dc87bdc6b383e4327bcb19a,https://<도메인>/s/768e570e8dc87bdc6b383e4327bcb19a
+10,bar-01,뮤지컬 펍니다,bar,UNGKCT,ee6288866e52cbd29c0d810ed6f67c85,https://<도메인>/s/ee6288866e52cbd29c0d810ed6f67c85
+11,bar-02,동아리연합회,bar,ZE6VH2,f9d8661045c6dcb223aaac503014f533,https://<도메인>/s/f9d8661045c6dcb223aaac503014f533
+12,bar-03,Y-58,bar,UPRM6M,735c0c851698c580e05a312a31af6932,https://<도메인>/s/735c0c851698c580e05a312a31af6932
+13,bar-04,잡초빼고 다팝니다,bar,3DX3JU,beee7e356caea2dfd545945765caf1d7,https://<도메인>/s/beee7e356caea2dfd545945765caf1d7
+14,bar-05,취(하지 않고)향저격,bar,PEFKN6,ae9766c2765d9f530ff000afc7460cb7,https://<도메인>/s/ae9766c2765d9f530ff000afc7460cb7
+15,bar-06,길 가닭 들러보수육,bar,PKVC76,efe1395d499a38795888e3ea180dfb7a,https://<도메인>/s/efe1395d499a38795888e3ea180dfb7a
+16,bar-07,궁극의 달빛포차,bar,Z32MMX,256d024724757c29a2bdde8fe5c65c71,https://<도메인>/s/256d024724757c29a2bdde8fe5c65c71
+17,act-01,지구로 향하는 기술,activity,BYPXSZ,8be44acd51ddec2a67b02b29ae295229,https://<도메인>/s/8be44acd51ddec2a67b02b29ae295229
+18,act-02,D-orbital 전시회,activity,UMHHC7,934bfb5939b1cb7a28dc3239ce8da612,https://<도메인>/s/934bfb5939b1cb7a28dc3239ce8da612
+19,act-03,PhEM-tastic Quiz!,activity,NWCHQV,c9ea5790ab431aa1c0c3bf5715de60a5,https://<도메인>/s/c9ea5790ab431aa1c0c3bf5715de60a5
+20,promo-01,샤오마라,promotion,WAFT55,bd5f5a3558cc576c97c1d0d0da1466c1,https://<도메인>/s/bd5f5a3558cc576c97c1d0d0da1466c1
+21,promo-02,한신포차,promotion,J6S8E9,93ccbf1808900215de74148afeb25924,https://<도메인>/s/93ccbf1808900215de74148afeb25924
+22,promo-03,리필드,promotion,R4TQWH,7176aad2e52dd28bd1f06be76ef68769,https://<도메인>/s/7176aad2e52dd28bd1f06be76ef68769
+23,promo-04,리즈발레,promotion,7M9TGJ,240409aa530a973ceb2e54e63bf92187,https://<도메인>/s/240409aa530a973ceb2e54e63bf92187
+24,promo-05,바이킹,promotion,TXX7QW,55a74e2385b7ab56c1ac9fdb8c3a2b7a,https://<도메인>/s/55a74e2385b7ab56c1ac9fdb8c3a2b7a
