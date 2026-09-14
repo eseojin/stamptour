@@ -18,6 +18,7 @@ import ListView from "./screens/ListView";
 import Me from "./screens/Me";
 import Admin from "./screens/Admin";
 import BoothSheet from "./components/BoothSheet";
+import Help from "./components/Help";
 import Reward from "./components/Reward";
 
 // QR 인식 라이브러리(@zxing)는 번들의 대부분을 차지한다.
@@ -41,6 +42,7 @@ type Overlay =
   | { kind: "sheet"; booth: Booth; token?: string }
   | { kind: "scan"; booth: Booth }
   | { kind: "reward"; tier: 7 | 13; serial: number | null }
+  | { kind: "help" }
   | null;
 
 export default function App() {
@@ -246,7 +248,16 @@ export default function App() {
 
         <div className="herobars">
           <div className="barhead">
-            <span>스탬프 적립 현황</span>
+            <span className="lb">
+              스탬프 적립 현황
+              <button
+                className="whatis"
+                aria-label="스탬프 투어 안내"
+                onClick={() => setOverlay({ kind: "help" })}
+              >
+                ?
+              </button>
+            </span>
             <span className="cnt">{count} / 13</span>
           </div>
           {/* 0~13 하나의 막대. 7회 지점에 홈을 내어 첫 보상 위치를 표시한다 */}
@@ -362,6 +373,10 @@ export default function App() {
           onManual={(code) => void handleToken(overlay.booth, code)}
           />
         </Suspense>
+      )}
+
+      {overlay?.kind === "help" && (
+        <Help config={config} boothCount={booths.length} onClose={() => setOverlay(null)} />
       )}
 
       {overlay?.kind === "reward" && (
