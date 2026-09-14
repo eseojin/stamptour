@@ -230,9 +230,6 @@ export default function App() {
     );
   }
 
-  const b7 = Math.min(count, 7);
-  const b13 = Math.min(count, 13);
-
   return (
     <div className="app">
       {/* 럭키드로우 안내와 진행 막대를 한 덩어리로 묶는다 */}
@@ -248,19 +245,20 @@ export default function App() {
         </div>
 
         <div className="herobars">
-          <div className="bar">
-            <span className="tag">7회</span>
-            <span className="track">
-              <span className={`fill${count >= 7 ? " done" : ""}`} style={{ width: `${(b7 / 7) * 100}%` }} />
-            </span>
-            <span className="st">{count >= 7 ? "달성" : `${b7}/7`}</span>
+          <div className="barhead">
+            <span>스탬프 적립 현황</span>
+            <span className="cnt">{count} / 13</span>
           </div>
-          <div className="bar">
-            <span className="tag">13회</span>
+          {/* 0~13 하나의 막대. 7회 지점에 홈을 내어 첫 보상 위치를 표시한다 */}
+          <div className="onebar">
             <span className="track">
-              <span className={`fill${count >= 13 ? " done" : ""}`} style={{ width: `${(b13 / 13) * 100}%` }} />
+              <span
+                className={`fill${count >= 13 ? " done" : ""}`}
+                style={{ width: `${(Math.min(count, 13) / 13) * 100}%` }}
+              />
+              <span className="notch" />
             </span>
-            <span className="st">{count >= 13 ? "달성" : `${b13}/13`}</span>
+            <span className={`mark7${count >= 7 ? " hit" : ""}`}>7회</span>
           </div>
         </div>
       </div>

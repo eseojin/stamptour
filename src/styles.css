@@ -76,20 +76,32 @@ button{font:inherit; color:inherit; cursor:pointer; border:0; background:none}
   margin-left:auto; font-size:11.5px; opacity:.82;
   font-variant-numeric:tabular-nums; white-space:nowrap;
 }
-.herobars{display:flex; flex-direction:column; gap:6px}
-.bar{display:flex; align-items:center; gap:8px; font-size:11px}
-.bar .tag{width:30px; flex:none; opacity:.75; font-variant-numeric:tabular-nums}
-.bar .track{
-  flex:1; height:5px; border-radius:99px; overflow:hidden;
+.herobars{display:flex; flex-direction:column; gap:7px}
+.barhead{display:flex; align-items:baseline; justify-content:space-between; font-size:11.5px; opacity:.85}
+.barhead .cnt{font-variant-numeric:tabular-nums; font-size:13px; opacity:1; font-weight:600}
+
+/* 7회 지점 홈의 위치. 13칸 중 7번째 = 53.846% */
+.onebar{position:relative; padding-bottom:14px; --at7:53.846%}
+.onebar .track{
+  display:block; position:relative; height:8px; border-radius:99px; overflow:hidden;
   background:color-mix(in srgb, var(--on-accent) 15%, transparent);
 }
-.bar .fill{
-  /* span 은 인라인이라 display:block 이 없으면 width 가 무시되어 항상 꽉 찬 것처럼 보인다 */
+.onebar .fill{
   display:block; height:100%; border-radius:99px; transition:width .35s ease;
-  background:color-mix(in srgb, var(--on-accent) 75%, transparent);
+  background:color-mix(in srgb, var(--on-accent) 72%, transparent);
 }
-.bar .fill.done{background:var(--on-accent)}
-.bar .st{width:46px; text-align:right; opacity:.82; font-variant-numeric:tabular-nums; flex:none}
+.onebar .fill.done{background:var(--on-accent)}
+/* 막대 배경과 같은 색이라, 채워졌든 비었든 홈처럼 파여 보인다 */
+.onebar .notch{
+  position:absolute; top:-1px; bottom:-1px; left:var(--at7);
+  width:2px; margin-left:-1px; background:var(--accent);
+}
+.mark7{
+  position:absolute; bottom:0; left:var(--at7); transform:translateX(-50%);
+  font-size:10px; opacity:.55; white-space:nowrap;
+  font-variant-numeric:tabular-nums;
+}
+.mark7.hit{opacity:.95; font-weight:600}
 
 /* 탭 */
 .tabs{display:flex; border-bottom:1px solid var(--line); background:var(--surface)}
@@ -243,7 +255,13 @@ body{overscroll-behavior:none}
 .subtabs button[aria-selected=true]{color:var(--ink); border-bottom-color:var(--ink); font-weight:600}
 
 .statgrid{display:grid; grid-template-columns:repeat(3,1fr); gap:8px}
-@media (max-width:380px){ .statgrid{grid-template-columns:repeat(2,1fr)} }
+
+/* 추첨 준비에 바로 쓰는 숫자라 따로 크게 둔다 */
+.ticketbox{border:1px solid var(--ink); border-radius:12px; padding:14px 16px; background:var(--surface-2)}
+.ticketbox .k{font-size:10.5px; letter-spacing:.06em; color:var(--muted); font-weight:600}
+.ticketbox .v{font-size:36px; line-height:1.1; letter-spacing:-.03em; font-variant-numeric:tabular-nums; margin-top:2px}
+.ticketbox .v .u{font-size:15px; letter-spacing:0; color:var(--muted); margin-left:3px}
+.ticketbox .s{font-size:12.5px; color:var(--ink-2); margin-top:3px; font-variant-numeric:tabular-nums}
 .stat{border:1px solid var(--line); border-radius:10px; padding:11px 12px; background:var(--surface)}
 .stat .k{font-size:10.5px; letter-spacing:.05em; color:var(--muted); font-weight:600}
 .stat .v{font-size:23px; letter-spacing:-.02em; font-variant-numeric:tabular-nums; margin-top:2px}

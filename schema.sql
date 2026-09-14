@@ -275,12 +275,14 @@ begin
   return jsonb_build_object(
     'ok', true,
     'participants',   (select count(*) from profiles),
-    'stamps',         (select count(*) from stamps),
+    -- 추첨 준비에 필요한 건 "몇 장 나갔고 번호가 몇 번까지 갔는가" 두 개다.
+    -- 번호가 전체 연속이라 last_serial 이 곧 준비해야 할 최대 숫자가 된다.
+    'tickets',        (select count(*) from tickets where serial is not null),
+    'last_serial',    (select coalesce(max(serial), 0) from tickets),
     'reached7',       (select count(*) from tickets where tier = 7),
     'reached13',      (select count(*) from tickets where tier = 13),
-    -- 19:30 이후 달성자는 번호가 없다. 실제 추첨 대상은 번호가 있는 것만.
-    'tickets7',       (select count(*) from tickets where tier = 7  and serial is not null),
-    'tickets13',      (select count(*) from tickets where tier = 13 and serial is not null),
+    -- 19:30 이후 13회 달성 → 번호 없이 굿즈만. 추첨 대상 아님.
+    'no_serial',      (select count(*) from tickets where serial is null),
     'goods_claimed',  (select count(*) from tickets where tier = 13 and goods_claimed_at is not null),
     'goods_pending',  (select count(*) from tickets where tier = 13 and goods_claimed_at is null),
     'tickets_open',   (now() <= cfg.ticket_deadline),

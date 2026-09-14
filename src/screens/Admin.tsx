@@ -63,11 +63,17 @@ function StatsPane() {
 
   return (
     <div className="admin">
+      {/* 추첨에 필요한 건 "번호가 몇 번까지 나갔는가" 하나다 */}
+      <div className="ticketbox">
+        <div className="k">발급된 응모권</div>
+        <div className="v">{st.tickets.toLocaleString()}<span className="u">장</span></div>
+        <div className="s">
+          {st.last_serial > 0 ? <>번호 <b>1 ~ {st.last_serial}</b> 사용 중</> : "아직 발급 전"}
+        </div>
+      </div>
+
       <div className="statgrid">
         <Stat k="참가자" v={st.participants} />
-        <Stat k="적립된 스탬프" v={st.stamps} />
-        <Stat k="7회 응모권" v={st.tickets7} sub={st.reached7 > st.tickets7 ? `달성 ${st.reached7}` : undefined} />
-        <Stat k="13회 응모권" v={st.tickets13} sub={st.reached13 > st.tickets13 ? `달성 ${st.reached13}` : undefined} />
         <Stat k="굿즈 지급" v={st.goods_claimed} />
         <Stat k="굿즈 미수령" v={st.goods_pending} />
       </div>
@@ -81,10 +87,10 @@ function StatsPane() {
         </span>
       </div>
 
-      {st.reached13 > st.tickets13 && (
+      {st.no_serial > 0 && (
         <p className="note">
-          13회 달성 {st.reached13}명 중 {st.reached13 - st.tickets13}명은 19:30 이후 달성이라
-          응모권 번호 없이 굿즈만 받습니다.
+          {st.no_serial}명은 19:30 이후에 13회를 채워 응모권 번호 없이 굿즈만 받습니다.
+          추첨 대상에는 들어가지 않습니다.
         </p>
       )}
 

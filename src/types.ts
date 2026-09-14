@@ -79,12 +79,14 @@ export type AdminStats =
   | {
       ok: true;
       participants: number;
-      stamps: number;
+      /** 번호가 붙은 응모권 장수 = 실제 추첨 대상 */
+      tickets: number;
+      /** 마지막으로 나간 번호. 추첨에 필요한 최대 숫자 */
+      last_serial: number;
       reached7: number;
       reached13: number;
-      /** 실제 추첨 대상 (19:30 이후 달성자는 번호가 없어 제외) */
-      tickets7: number;
-      tickets13: number;
+      /** 19:30 이후 달성이라 번호 없이 굿즈만 받는 건수 */
+      no_serial: number;
       goods_claimed: number;
       goods_pending: number;
       tickets_open: boolean;
