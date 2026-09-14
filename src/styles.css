@@ -61,24 +61,35 @@ button{font:inherit; color:inherit; cursor:pointer; border:0; background:none}
 .primary:disabled{opacity:.4; cursor:not-allowed}
 .ghost{border:1px solid var(--line); border-radius:10px; padding:13px; width:100%; text-align:center; font-size:14px; color:var(--ink-2)}
 
-/* 상단 */
-.draw{
-  display:flex; align-items:center; gap:10px; padding:11px 16px;
+/* 상단 — 럭키드로우 안내 + 진행 막대를 한 덩어리로 */
+.hero{
   background:var(--accent); color:var(--on-accent);
+  padding:11px 16px 13px;
+  padding-top:max(11px,env(safe-area-inset-top));
+  display:flex; flex-direction:column; gap:10px;
 }
-.draw .t{font-size:21px; line-height:1; letter-spacing:.01em}
-.draw .lab{font-size:11.5px; opacity:.82; line-height:1.35}
-.draw .left{margin-left:auto; font-size:11.5px; opacity:.82; text-align:right; font-variant-numeric:tabular-nums}
-.prog{display:flex; gap:10px; padding:12px 16px; border-bottom:1px solid var(--line); align-items:center}
-.prog .count{font-size:20px; font-variant-numeric:tabular-nums; letter-spacing:-.02em; font-weight:600}
-.prog .of{font-size:12px; color:var(--muted)}
-.bars{flex:1; display:flex; flex-direction:column; gap:5px}
-.bar{display:flex; align-items:center; gap:7px; font-size:11px; color:var(--muted)}
-.bar .track{flex:1; height:4px; border-radius:99px; background:var(--surface-2); overflow:hidden}
-.bar .fill{height:100%; background:var(--ink-2); border-radius:99px; transition:width .35s ease}
-.bar .fill.done{background:var(--ink)}
-.bar .tag{width:34px; font-variant-numeric:tabular-nums}
-.bar .st{width:42px; text-align:right}
+.herotop{display:flex; align-items:baseline; gap:8px; flex-wrap:wrap}
+.herotop .t{font-size:22px; line-height:1; letter-spacing:.01em; flex:none}
+.herotop .lab{font-size:12.5px; opacity:.9}
+.herotop .paren{opacity:.72; font-size:11.5px}
+.herotop .left{
+  margin-left:auto; font-size:11.5px; opacity:.82;
+  font-variant-numeric:tabular-nums; white-space:nowrap;
+}
+.herobars{display:flex; flex-direction:column; gap:6px}
+.bar{display:flex; align-items:center; gap:8px; font-size:11px}
+.bar .tag{width:30px; flex:none; opacity:.75; font-variant-numeric:tabular-nums}
+.bar .track{
+  flex:1; height:5px; border-radius:99px; overflow:hidden;
+  background:color-mix(in srgb, var(--on-accent) 15%, transparent);
+}
+.bar .fill{
+  /* span 은 인라인이라 display:block 이 없으면 width 가 무시되어 항상 꽉 찬 것처럼 보인다 */
+  display:block; height:100%; border-radius:99px; transition:width .35s ease;
+  background:color-mix(in srgb, var(--on-accent) 75%, transparent);
+}
+.bar .fill.done{background:var(--on-accent)}
+.bar .st{width:46px; text-align:right; opacity:.82; font-variant-numeric:tabular-nums; flex:none}
 
 /* 탭 */
 .tabs{display:flex; border-bottom:1px solid var(--line); background:var(--surface)}
@@ -225,3 +236,42 @@ body{overscroll-behavior:none}
 .inbanner{background:var(--surface-2); border-bottom:1px solid var(--line); padding:9px 16px; font-size:12px; color:var(--muted); display:flex; gap:8px; align-items:center}
 .inbanner b{color:var(--ink)}
 .linkbtn{font-size:12px; color:var(--muted); text-decoration:underline; margin-left:auto}
+
+/* ---------- 관리자 탭 ---------- */
+.subtabs{display:flex; border-bottom:1px solid var(--line); background:var(--surface)}
+.subtabs button{flex:1; padding:11px 0; font-size:13px; color:var(--muted); border-bottom:2px solid transparent}
+.subtabs button[aria-selected=true]{color:var(--ink); border-bottom-color:var(--ink); font-weight:600}
+
+.statgrid{display:grid; grid-template-columns:repeat(3,1fr); gap:8px}
+@media (max-width:380px){ .statgrid{grid-template-columns:repeat(2,1fr)} }
+.stat{border:1px solid var(--line); border-radius:10px; padding:11px 12px; background:var(--surface)}
+.stat .k{font-size:10.5px; letter-spacing:.05em; color:var(--muted); font-weight:600}
+.stat .v{font-size:23px; letter-spacing:-.02em; font-variant-numeric:tabular-nums; margin-top:2px}
+.stat .s{font-size:10.5px; color:var(--muted); margin-top:1px; font-variant-numeric:tabular-nums}
+
+.pills{display:flex; gap:6px; flex-wrap:wrap}
+.pill{font-size:11.5px; padding:4px 10px; border-radius:99px; border:1px solid var(--line); color:var(--muted)}
+.pill.on{border-color:var(--ink); color:var(--ink)}
+
+.note{font-size:12px; color:var(--muted); line-height:1.7; margin:0}
+
+.boothstats{display:flex; flex-direction:column; gap:5px}
+.brow{display:flex; align-items:center; gap:8px; font-size:12px}
+.brow .bno{width:18px; color:var(--muted); font-variant-numeric:tabular-nums; flex:none; text-align:right}
+.brow .bnm{width:96px; flex:none; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--ink-2)}
+.brow .btrack{flex:1; height:6px; border-radius:99px; background:var(--surface-2); overflow:hidden}
+.brow .bfill{display:block; height:100%; background:var(--ink-2); border-radius:99px}
+.brow .bcnt{width:30px; text-align:right; font-variant-numeric:tabular-nums; color:var(--muted); flex:none}
+
+.ptable{display:flex; flex-direction:column}
+.prow{
+  display:grid; grid-template-columns:1fr auto; gap:2px 10px;
+  padding:10px 0; border-bottom:1px solid var(--line); align-items:baseline;
+}
+.prow:last-child{border-bottom:0}
+.pnick{font-size:14px; letter-spacing:-.01em}
+.tagop{font-size:10px; margin-left:6px; padding:1px 6px; border-radius:99px; border:1px solid var(--line); color:var(--muted)}
+.pstamp{font-size:13px; font-variant-numeric:tabular-nums; color:var(--ink-2); text-align:right}
+.ptick{grid-column:1; display:flex; gap:6px; flex-wrap:wrap}
+.tk{font-size:11px; color:var(--muted); border:1px solid var(--line); border-radius:6px; padding:1px 6px; font-variant-numeric:tabular-nums}
+.pgoods{grid-column:2; font-size:11px; color:var(--muted); text-align:right; white-space:nowrap}

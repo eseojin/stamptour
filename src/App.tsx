@@ -36,7 +36,7 @@ const ENTRY_TOKEN = (() => {
   return m[1];
 })();
 
-type Tab = "map" | "list" | "me";
+type Tab = "map" | "list" | "me" | "admin";
 type Overlay =
   | { kind: "sheet"; booth: Booth; token?: string }
   | { kind: "scan"; booth: Booth }
@@ -56,7 +56,6 @@ export default function App() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
 
   const [tab, setTab] = useState<Tab>("map");
-  const [adminMode, setAdminMode] = useState(false);
   const [overlay, setOverlay] = useState<Overlay>(null);
   const [scanFail, setScanFail] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
@@ -231,45 +230,24 @@ export default function App() {
     );
   }
 
-  if (adminMode && isOperator) {
-    return (
-      <div className="app">
-        <Admin onBack={() => setAdminMode(false)} />
-      </div>
-    );
-  }
-
   const b7 = Math.min(count, 7);
   const b13 = Math.min(count, 13);
 
   return (
     <div className="app">
-      <div className="draw">
-        <span className="t serif">{hhmm(config.ticket_deadline)}</span>
-        <span className="lab">
-          럭키드로우 추첨
-          <br />
-          아티스트 공연 직전
-        </span>
-        <span className="left">
-          {untilDeadline ? (
-            <>
-              응모권 마감까지
-              <br />
-              {untilDeadline}
-            </>
-          ) : (
-            "응모권 마감"
-          )}
-        </span>
-      </div>
-
-      <div className="prog">
-        <div>
-          <span className="count">{count}</span>
-          <span className="of"> / {booths.length}</span>
+      {/* 럭키드로우 안내와 진행 막대를 한 덩어리로 묶는다 */}
+      <div className="hero">
+        <div className="herotop">
+          <span className="t serif">{hhmm(config.ticket_deadline)}</span>
+          <span className="lab">
+            럭키드로우 추첨 <span className="paren">(아티스트 공연 직전)</span>
+          </span>
+          <span className="left">
+            {untilDeadline ? <>마감까지 {untilDeadline}</> : "응모권 마감"}
+          </span>
         </div>
-        <div className="bars">
+
+        <div className="herobars">
           <div className="bar">
             <span className="tag">7회</span>
             <span className="track">
@@ -287,7 +265,7 @@ export default function App() {
         </div>
       </div>
 
-      {tab !== "me" && (
+      {tab !== "me" && tab !== "admin" && (
         <div className="tabs" role="tablist">
           <button role="tab" aria-selected={tab === "map"} onClick={() => setTab("map")}>
             지도
@@ -298,6 +276,9 @@ export default function App() {
         </div>
       )}
 
+      {tab === "admin" && isOperator ? (
+        <Admin />
+      ) : (
       <div className="scroll">
         {tab === "me" ? (
           <Me
@@ -305,8 +286,6 @@ export default function App() {
             booths={booths}
             stamps={stamps}
             tickets={tickets}
-            isOperator={isOperator}
-            onOpenAdmin={() => setAdminMode(true)}
           />
         ) : tab === "list" ? (
           <ListView booths={booths} stamps={stamps} onPick={(b) => setOverlay({ kind: "sheet", booth: b })} />
@@ -314,9 +293,10 @@ export default function App() {
           <MapView booths={booths} stamps={stamps} onPick={(b) => setOverlay({ kind: "sheet", booth: b })} />
         )}
       </div>
+      )}
 
       <div className="tabbar">
-        <button aria-current={tab !== "me" ? "page" : "false"} onClick={() => setTab("map")}>
+        <button aria-current={tab === "map" || tab === "list" ? "page" : "false"} onClick={() => setTab("map")}>
           <svg className="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
             <path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z" />
             <path d="M9 4v14M15 6v14" />
@@ -330,6 +310,14 @@ export default function App() {
           </svg>
           내 정보
         </button>
+        {isOperator && (
+          <button aria-current={tab === "admin" ? "page" : "false"} onClick={() => setTab("admin")}>
+            <svg className="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
+              <path d="M4 19V9M9.3 19V4M14.7 19v-8M20 19v-5" strokeLinecap="round" />
+            </svg>
+            관리자
+          </button>
+        )}
       </div>
 
       {toast && <div className="toast">{toast}</div>}

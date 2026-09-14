@@ -73,3 +73,34 @@ export const CATEGORY_LABEL: Record<Category, string> = {
   activity: "Activity",
   promotion: "Promotion",
 };
+
+/** admin_stats RPC — 운영자 전용 전체 현황 */
+export type AdminStats =
+  | {
+      ok: true;
+      participants: number;
+      stamps: number;
+      reached7: number;
+      reached13: number;
+      /** 실제 추첨 대상 (19:30 이후 달성자는 번호가 없어 제외) */
+      tickets7: number;
+      tickets13: number;
+      goods_claimed: number;
+      goods_pending: number;
+      tickets_open: boolean;
+      stamp_open: boolean;
+      booths: { no: number; name: string; count: number }[];
+    }
+  | { ok: false; error: "NOT_OPERATOR" };
+
+/** admin_participants RPC 의 한 행 */
+export interface AdminRow {
+  nickname: string;
+  stamps: number;
+  t7: number | null;
+  t13: number | null;
+  has13: boolean;
+  /** 굿즈 수령 시각. null 이면 미수령 */
+  goods: string | null;
+  operator: boolean;
+}

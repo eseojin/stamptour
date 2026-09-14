@@ -6,8 +6,6 @@ interface Props {
   booths: Booth[];
   stamps: Map<string, string>;
   tickets: Ticket[];
-  isOperator: boolean;
-  onOpenAdmin: () => void;
 }
 
 function TicketCard({ tier, ticket }: { tier: 7 | 13; ticket?: Ticket }) {
@@ -69,8 +67,6 @@ export default function Me({
   booths,
   stamps,
   tickets,
-  isOperator,
-  onOpenAdmin,
 }: Props) {
   const t7 = tickets.find((t) => t.tier === 7);
   const t13 = tickets.find((t) => t.tier === 13);
@@ -107,11 +103,6 @@ export default function Me({
         )}
       </div>
 
-      {isOperator && (
-        <button className="ghost" onClick={onOpenAdmin}>
-          굿즈 지급 화면 열기
-        </button>
-      )}
     </div>
   );
 }

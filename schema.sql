@@ -1,5 +1,6 @@
 -- 달빛제 스탬프투어 Supabase 스키마 (Postgres 16 검증 완료)
 -- 적용: Supabase Dashboard > SQL Editor 에 그대로 붙여넣기
+-- v0.6 — 응모권 번호를 티어별이 아닌 전체 공용 1개 시퀀스로 변경
 -- v0.5 — 행사일 2026-09-18(금), 적립 15:00~22:00,
 --        응모권 발급은 19:30 마감 (이후 13회 달성자는 굿즈만 수령)
 --        운영자 권한을 operators 테이블로 관리 (service_role 키를 브라우저에 두지 않기 위함)
@@ -52,6 +53,7 @@ create table stamps (
 );
 
 -- 응모권 발급대장 (1인 최대 2장: tier 7, tier 13)
+-- tier 는 "어떻게 받았는지"만 뜻하고, 번호(serial)는 전체에서 하나의 연속 수열이다.
 create table tickets (
   id              bigserial primary key,
   user_id         uuid not null references profiles(id) on delete cascade,
@@ -60,9 +62,13 @@ create table tickets (
   issued_at       timestamptz not null default now(),
   goods_claimed_at timestamptz,           -- tier 13 굿즈 수령 시각 (총학 본부에서 체크)
   constraint tickets_tier_chk check (tier in (7, 13)),
-  unique (tier, serial),                  -- 번호 중복 방지
-  unique (user_id, tier)                  -- 1인 1티어 1장
+  unique (user_id, tier)                  -- 1인 1티어 1장 (최대 2장)
 );
+
+-- 럭키드로우를 한 통에 모아 한 번에 뽑으므로 번호는 전체에서 고유해야 한다.
+-- (티어별로 따로 매기면 "7회 1번"과 "13회 1번"이 동시에 존재해 추첨 때 가릴 수 없다)
+-- serial 이 NULL 인 행(19:30 이후 달성)은 여러 개 있어도 되므로 부분 유니크 인덱스를 쓴다.
+create unique index tickets_serial_key on tickets (serial) where serial is not null;
 
 -- 운영자 (굿즈 지급 창구). 여기 등록된 계정만 claim_goods 를 호출할 수 있다.
 create table operators (
@@ -71,13 +77,14 @@ create table operators (
   added_at timestamptz not null default now()
 );
 
--- 티어별 다음 번호 카운터
+-- 응모권 번호 카운터. 전체 공용 한 줄만 쓴다 (tier 0 = 전체).
+-- 7회로 받든 13회로 받든 같은 통에 들어가므로 번호도 하나의 연속 수열이다.
 create table ticket_counters (
-  tier        smallint primary key,
+  tier        smallint primary key,       -- 0 = 전체 공용
   last_serial int not null default 0,
   max_serial  int                         -- 응모권 상한 (없으면 null)
 );
-insert into ticket_counters (tier) values (7), (13);
+insert into ticket_counters (tier) values (0);
 
 
 -- ===== 스탬프 적립 RPC =====
@@ -148,9 +155,10 @@ begin
     then
       if v_open then
         -- 19:30 이전: 응모권 번호 발급
+        -- 전체 공용 카운터 한 줄(tier 0)을 올린다. 행 잠금이 동시 요청을 줄 세운다.
         update ticket_counters
-           set last_serial = last_serial + 1     -- ← 행 잠금으로 직렬화
-         where tier = v_tier
+           set last_serial = last_serial + 1
+         where tier = 0
            and (max_serial is null or last_serial < max_serial)
         returning last_serial into v_serial;
 
@@ -245,6 +253,84 @@ begin
 end $$;
 
 
+-- ===== 운영자 전용 현황 조회 =====
+-- RLS 가 참가자를 본인 행으로 묶어 두므로, 전체를 보려면 security definer 함수를 써야 한다.
+-- 두 함수 모두 operators 소속을 먼저 확인하므로, 참가자가 직접 호출해도 아무것도 나오지 않는다.
+
+create or replace function admin_stats()
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+stable
+as $$
+declare cfg event_config%rowtype;
+begin
+  if not exists (select 1 from operators where user_id = auth.uid()) then
+    return jsonb_build_object('ok', false, 'error', 'NOT_OPERATOR');
+  end if;
+
+  select * into cfg from event_config where id = 1;
+
+  return jsonb_build_object(
+    'ok', true,
+    'participants',   (select count(*) from profiles),
+    'stamps',         (select count(*) from stamps),
+    'reached7',       (select count(*) from tickets where tier = 7),
+    'reached13',      (select count(*) from tickets where tier = 13),
+    -- 19:30 이후 달성자는 번호가 없다. 실제 추첨 대상은 번호가 있는 것만.
+    'tickets7',       (select count(*) from tickets where tier = 7  and serial is not null),
+    'tickets13',      (select count(*) from tickets where tier = 13 and serial is not null),
+    'goods_claimed',  (select count(*) from tickets where tier = 13 and goods_claimed_at is not null),
+    'goods_pending',  (select count(*) from tickets where tier = 13 and goods_claimed_at is null),
+    'tickets_open',   (now() <= cfg.ticket_deadline),
+    'stamp_open',     (now() between cfg.stamp_opens_at and cfg.stamp_closes_at),
+    'booths', (
+      select coalesce(jsonb_agg(jsonb_build_object(
+               'no', b.sort_order,
+               'name', coalesce(nullif(b.name,''), b.team),
+               'count', (select count(*) from stamps s where s.booth_id = b.id))
+             order by b.sort_order), '[]'::jsonb)
+      from booths b where b.is_active
+    )
+  );
+end $$;
+
+
+-- 참가자 목록. p_query 로 닉네임 부분검색, 없으면 스탬프 많은 순.
+create or replace function admin_participants(p_query text default null, p_limit int default 100)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+stable
+as $$
+begin
+  if not exists (select 1 from operators where user_id = auth.uid()) then
+    return jsonb_build_object('ok', false, 'error', 'NOT_OPERATOR');
+  end if;
+
+  return jsonb_build_object('ok', true, 'rows', coalesce((
+    select jsonb_agg(r order by r->>'stamps' desc)
+    from (
+      select jsonb_build_object(
+               'nickname', p.nickname,
+               'stamps',   (select count(*) from stamps s where s.user_id = p.id),
+               't7',       (select serial from tickets t where t.user_id = p.id and t.tier = 7),
+               't13',      (select serial from tickets t where t.user_id = p.id and t.tier = 13),
+               'has13',    exists (select 1 from tickets t where t.user_id = p.id and t.tier = 13),
+               'goods',    (select goods_claimed_at from tickets t where t.user_id = p.id and t.tier = 13),
+               'operator', exists (select 1 from operators o where o.user_id = p.id)
+             ) as r
+        from profiles p
+       where p_query is null or p_query = '' or p.nickname ilike '%'||p_query||'%'
+       order by (select count(*) from stamps s where s.user_id = p.id) desc, p.created_at
+       limit greatest(1, least(coalesce(p_limit, 100), 500))
+    ) x
+  ), '[]'::jsonb));
+end $$;
+
+
 -- ===== RLS =====
 alter table event_config    enable row level security;
 alter table operators       enable row level security;
@@ -283,6 +369,12 @@ revoke execute on function claim_goods(text)       from public;
 
 grant execute on function claim_stamp(text, text) to authenticated;
 grant execute on function peek_booth(text)        to authenticated;
+
+-- 관리자 탭 조회 함수도 내부에서 operators 를 확인하므로 authenticated 에 부여해도 안전하다
+revoke execute on function admin_stats()                 from public;
+revoke execute on function admin_participants(text, int) from public;
+grant  execute on function admin_stats()                 to authenticated;
+grant  execute on function admin_participants(text, int) to authenticated;
 -- claim_goods 는 함수 내부에서 operators 소속을 확인하므로 authenticated 에 부여해도 안전하다
 grant execute on function claim_goods(text)       to authenticated;
 

@@ -1,5 +1,7 @@
 import { supabase, nicknameToEmail } from "../supabase";
 import type {
+  AdminRow,
+  AdminStats,
   Booth,
   ClaimResult,
   EventConfig,
@@ -131,6 +133,25 @@ export async function claimGoods(nickname: string): Promise<GoodsResult> {
   });
   if (error) throw new Error(error.message);
   return data as GoodsResult;
+}
+
+/* ---------------- 운영자 전용 조회 ---------------- */
+
+/** 전체 현황. RLS 를 우회해야 해서 서버 함수로 받고, 함수가 운영자 여부를 확인한다. */
+export async function adminStats(): Promise<AdminStats> {
+  const { data, error } = await supabase.rpc("admin_stats");
+  if (error) throw new Error(error.message);
+  return data as AdminStats;
+}
+
+export async function adminParticipants(query: string): Promise<AdminRow[]> {
+  const { data, error } = await supabase.rpc("admin_participants", {
+    p_query: query.trim() || null,
+    p_limit: 300,
+  });
+  if (error) throw new Error(error.message);
+  const r = data as { ok: boolean; rows?: AdminRow[] };
+  return r.ok ? (r.rows ?? []) : [];
 }
 
 /* ---------------- QR 페이로드 ---------------- */
