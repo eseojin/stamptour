@@ -151,7 +151,6 @@ function PeoplePane() {
           id="pq"
           value={q}
           autoComplete="off"
-          placeholder="비워 두면 스탬프 많은 순으로 전체"
           onChange={(e) => setQ(e.target.value)}
         />
       </div>
