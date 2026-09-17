@@ -5,6 +5,7 @@ export const CAT_VAR: Record<Category, string> = {
   bar: "var(--bar)",
   activity: "var(--act)",
   promotion: "var(--promo)",
+  ride: "var(--viking)",
 };
 
 /** 09/18 18:40 → "18:40" (행사 당일 기준이라 날짜는 생략) */

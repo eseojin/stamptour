@@ -1,11 +1,11 @@
 import type { Booth } from "../types";
 import type { InfoKey } from "../components/InfoSheet";
-import { CATEGORY_LABEL } from "../types";
+import { CATEGORY_LABEL, LEGEND_CATEGORIES } from "../types";
 import { CAT_VAR } from "../lib/theme";
 
 /** 부스 좌표는 이 viewBox 기준 비율로 DB에 들어 있다 */
 const VW = 880;
-const VH = 1640;
+const VH = 1500;
 
 interface Props {
   booths: Booth[];
@@ -64,8 +64,9 @@ function fitName(name: string, w: number, h: number, pad: number) {
   const availW = w - pad * 2;
   const availH = h - 34; // 위쪽 번호 자리를 뺀 높이
   const CAP = 26;
+  const MAX_LINES = 2;
   let best = { fs: 0, lines: [name] };
-  for (let n = 1; n <= 3; n++) {
+  for (let n = 1; n <= MAX_LINES; n++) {
     const lines = splitLines(name, n);
     if (!lines) continue;
     const widest = Math.max(...lines.map(em));
@@ -83,6 +84,8 @@ function Inert({
   label,
   fs = 26,
   onOpen,
+  tint,
+  inRow,
 }: {
   x: number;
   y: number;
@@ -92,6 +95,10 @@ function Inert({
   fs?: number;
   /** 주면 눌러서 안내를 열 수 있는 칸이 된다 */
   onOpen?: () => void;
+  /** 카테고리 색을 입힌다. 스탬프 부스는 아니지만 분류는 같은 곳에 쓴다 */
+  tint?: string;
+  /** 아래쪽 한 줄에 놓이는 칸. 부스 칩과 글자 높이를 맞춘다 */
+  inRow?: boolean;
 }) {
   const body = (
     <>
@@ -101,16 +108,17 @@ function Inert({
         width={w}
         height={h}
         rx={10}
-        fill="var(--surface-2)"
-        stroke="var(--map-inert)"
+        fill={tint ?? "var(--surface-2)"}
+        fillOpacity={tint ? 0.42 : 1}
+        stroke={tint ?? "var(--map-inert)"}
         strokeWidth={2}
       />
       <text
         x={x + w / 2}
-        y={y + h / 2 + fs * 0.35}
+        y={inRow ? y + 26 + (h - 34) / 2 + fs * 0.22 : y + h / 2 + fs * 0.35}
         fontSize={fs}
         textAnchor="middle"
-        fill="var(--map-inert-ink)"
+        fill={tint ? "var(--ink-2)" : "var(--map-inert-ink)"}
       >
         {label}
       </text>
@@ -143,21 +151,26 @@ function Chip({
   no,
   done,
   onPick,
+  maxFs,
 }: {
   booth: Booth;
   no: number;
   done: boolean;
   onPick: () => void;
+  /** 같은 줄의 칸들끼리 글자 크기를 맞출 때 쓰는 상한 */
+  maxFs?: number;
 }) {
   const x = booth.map_x * VW;
   const y = booth.map_y * VH;
   const w = booth.map_w * VW;
   const h = booth.map_h * VH;
-  const wide = w >= 150;
+  const wide = w >= 180;
   const pad = wide ? 14 : 10;
   const name = booth.name || booth.team;
   const tint = CAT_VAR[booth.category];
-  const { fs, lines } = fitName(name, w, h, pad);
+  const fit = fitName(name, w, h, pad);
+  const fs = Math.min(fit.fs, maxFs ?? Infinity);
+  const lines = fit.lines;
   const lh = fs * 1.24;
   const top = y + 26 + Math.max(0, (h - 34 - lines.length * lh) / 2);
   const ink = done ? "var(--surface)" : "var(--ink)";
@@ -229,19 +242,29 @@ function Chip({
 }
 
 export default function MapView({ booths, stamps, onPick, onInfo }: Props) {
-  const legend = Object.keys(CATEGORY_LABEL) as (keyof typeof CAT_VAR)[];
+  const legend = LEGEND_CATEGORIES;
+
+  /** 아래쪽 한 줄은 칸 폭이 제각각이라, 가장 작은 글자에 맞춰 크기를 통일한다 */
+  const inRow = (b: Booth) => b.map_y > 0.75 && b.map_h > 0.08;
+  const rowSizes = booths
+    .filter(inRow)
+    .map((b) => {
+      const w = b.map_w * VW;
+      return fitName(b.name || b.team, w, b.map_h * VH, w >= 180 ? 14 : 10).fs;
+    });
+  const rowFs = rowSizes.length ? Math.min(...rowSizes) : 26;
 
   return (
     <div className="mapwrap">
       <svg viewBox={`0 0 ${VW} ${VH}`} role="img" aria-label="달빛제 부스 배치도">
-        <Inert x={40} y={34} w={210} h={58} label="달성군 보건소" />
-        <rect x={300} y={26} width={330} height={74} rx={8} fill="var(--stage)" />
-        <text x={465} y={74} fontSize={34} textAnchor="middle" fill="#F0E6FA" letterSpacing={6}>
+        <Inert x={40} y={34} w={150} h={58} label="보건소" />
+        <rect x={275} y={26} width={330} height={74} rx={8} fill="var(--stage)" />
+        <text x={440} y={74} fontSize={34} textAnchor="middle" fill="#F0E6FA" letterSpacing={6}>
           STAGE
         </text>
 
         {legend.map((key, i) => (
-          <g key={key} transform={`translate(352 ${575 + i * 50})`}>
+          <g key={key} transform={`translate(330 ${575 + i * 50})`}>
             <rect
               width={28}
               height={28}
@@ -258,27 +281,36 @@ export default function MapView({ booths, stamps, onPick, onInfo }: Props) {
         ))}
 
         {booths.map((b, i) => (
-          <Chip key={b.id} booth={b} no={i + 1} done={stamps.has(b.id)} onPick={() => onPick(b)} />
+          <Chip
+            key={b.id}
+            booth={b}
+            no={i + 1}
+            done={stamps.has(b.id)}
+            onPick={() => onPick(b)}
+            maxFs={inRow(b) ? rowFs : undefined}
+          />
         ))}
 
         {/* 스탬프 대상이 아닌 곳들 */}
         <Inert
-          x={670}
-          y={1223}
-          w={198}
+          x={493}
+          y={1215}
+          w={110}
           h={130}
           label="주류 판매"
-          fs={25}
+          fs={rowFs}
+          inRow
           onOpen={() => onInfo("liquor")}
         />
-        {/* 일화 부스는 스탬프 대상이 아니라 안내만 연다 */}
         <Inert
-          x={672}
-          y={1370}
-          w={198}
+          x={610}
+          y={1215}
+          w={70}
           h={130}
           label="일화"
-          fs={26}
+          fs={rowFs}
+          inRow
+          tint={CAT_VAR.promotion}
           onOpen={() => onInfo("ilhwa")}
         />
 
@@ -292,7 +324,7 @@ export default function MapView({ booths, stamps, onPick, onInfo }: Props) {
           stroke="var(--map-inert)"
           strokeWidth={2}
         />
-        <text x={185} y={1572} fontSize={24} textAnchor="middle" fill="var(--map-inert-ink)">
+        <text x={185} y={1427} fontSize={24} textAnchor="middle" fill="var(--map-inert-ink)">
           관람석
         </text>
         <rect
@@ -305,7 +337,7 @@ export default function MapView({ booths, stamps, onPick, onInfo }: Props) {
           stroke="var(--map-inert)"
           strokeWidth={2}
         />
-        <text x={605} y={1572} fontSize={24} textAnchor="middle" fill="var(--map-inert-ink)">
+        <text x={605} y={1427} fontSize={24} textAnchor="middle" fill="var(--map-inert-ink)">
           관람석
         </text>
 
@@ -323,11 +355,11 @@ export default function MapView({ booths, stamps, onPick, onInfo }: Props) {
             }
           }}
         >
-          <rect x={340} y={1515} width={160} height={90} rx={10} fill="var(--hq)" />
-          <text x={420} y={1555} fontSize={27} textAnchor="middle" fill="#FFFFFF">
+          <rect x={340} y={1370} width={160} height={90} rx={10} fill="var(--hq)" />
+          <text x={420} y={1410} fontSize={27} textAnchor="middle" fill="#FFFFFF">
             총학생회
           </text>
-          <text x={420} y={1585} fontSize={22} textAnchor="middle" fill="#EBDDF3">
+          <text x={420} y={1440} fontSize={22} textAnchor="middle" fill="#EBDDF3">
             굿즈 수령
           </text>
         </g>

@@ -29,9 +29,11 @@ export default function BoothSheet({
       <div className="sheet" role="dialog" aria-modal="true" aria-label={booth.name || booth.team}>
         <div className="grab" />
         <div className="hd">
-          <span className="badge" style={{ background: CAT_VAR[booth.category] }}>
-            {CATEGORY_LABEL[booth.category]} 부스
-          </span>
+          {CATEGORY_LABEL[booth.category] && (
+            <span className="badge" style={{ background: CAT_VAR[booth.category] }}>
+              {CATEGORY_LABEL[booth.category]} 부스
+            </span>
+          )}
           <button className="closex" onClick={onClose} aria-label="닫기">
             ✕
           </button>
@@ -40,8 +42,9 @@ export default function BoothSheet({
         <div className="bd">
           <div>
             <h3>{booth.name || "(부스명 미정)"}</h3>
+            {/* 바이킹처럼 부스명과 팀명이 같으면 한 번만 보여 준다 */}
             <div className="team">
-              {no}번 · {booth.team}
+              {no}번{booth.team && booth.team !== booth.name ? ` · ${booth.team}` : ""}
             </div>
           </div>
 

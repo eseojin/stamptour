@@ -1,4 +1,4 @@
-export type Category = "food" | "bar" | "activity" | "promotion";
+export type Category = "food" | "bar" | "activity" | "promotion" | "ride";
 
 export interface Booth {
   id: string;
@@ -67,13 +67,17 @@ export type GoodsResult =
       stamp_count?: number;
     };
 
-/** 배부 지도와 같은 이름을 쓴다 */
-export const CATEGORY_LABEL: Record<Category, string> = {
+/** 배부 지도와 같은 이름을 쓴다. ride 는 부스가 아니라 놀이기구라 배지를 달지 않는다 */
+export const CATEGORY_LABEL: Record<Category, string | null> = {
   food: "음식",
   bar: "안주",
   activity: "체험",
   promotion: "프로모션",
+  ride: null,
 };
+
+/** 지도 범례에 올리는 부스 분류 */
+export const LEGEND_CATEGORIES: Category[] = ["food", "bar", "activity", "promotion"];
 
 /** admin_stats RPC — 운영자 전용 전체 현황 */
 export type AdminStats =
