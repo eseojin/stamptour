@@ -20,6 +20,7 @@ import Admin from "./screens/Admin";
 import BoothSheet from "./components/BoothSheet";
 import Help from "./components/Help";
 import Reward from "./components/Reward";
+import InfoSheet, { type InfoKey } from "./components/InfoSheet";
 
 // QR 인식 라이브러리(@zxing)는 번들의 대부분을 차지한다.
 // 축제 현장 셀룰러에서 첫 화면이 느려지지 않도록, 스캐너를 처음 열 때 내려받는다.
@@ -43,6 +44,7 @@ type Overlay =
   | { kind: "scan"; booth: Booth }
   | { kind: "reward"; tier: 7 | 13; serial: number | null }
   | { kind: "help" }
+  | { kind: "info"; which: InfoKey }
   | null;
 
 export default function App() {
@@ -299,7 +301,12 @@ export default function App() {
         ) : tab === "list" ? (
           <ListView booths={booths} stamps={stamps} onPick={(b) => setOverlay({ kind: "sheet", booth: b })} />
         ) : (
-          <MapView booths={booths} stamps={stamps} onPick={(b) => setOverlay({ kind: "sheet", booth: b })} />
+          <MapView
+            booths={booths}
+            stamps={stamps}
+            onPick={(b) => setOverlay({ kind: "sheet", booth: b })}
+            onInfo={(which) => setOverlay({ kind: "info", which })}
+          />
         )}
       </div>
       )}
@@ -373,6 +380,10 @@ export default function App() {
           onManual={(code) => void handleToken(overlay.booth, code)}
           />
         </Suspense>
+      )}
+
+      {overlay?.kind === "info" && (
+        <InfoSheet which={overlay.which} onClose={() => setOverlay(null)} />
       )}
 
       {overlay?.kind === "help" && (

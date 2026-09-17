@@ -17,7 +17,7 @@
   --night-a:#1B1937; --night-b:#3F2A62; --night-c:#57397F;
   --food:#C993DF; --bar:#F29EC0; --act:#FFCD4A; --promo:#EC61A7;
   --map-ground:#E6D3ED; --map-inert:#D3BEDE; --map-inert-ink:#7C6690;
-  --stage:#45395D; --hq:#8C669D;
+  --stage:#45395D; --hq:#8C669D; --viking:#267BCA;
   --shadow:0 1px 2px rgba(47,28,69,.06),0 10px 30px rgba(47,28,69,.12);
   --scrim:rgba(27,25,55,.46);
   color-scheme:light;
@@ -209,6 +209,23 @@ button{font:inherit; color:inherit; cursor:pointer; border:0; background:none}
 .rw .n{flex:none; min-width:34px; font-size:13px; font-weight:700; color:var(--accent); font-variant-numeric:tabular-nums}
 .rw .d{font-size:13.5px; color:var(--ink); line-height:1.5}
 .rw .d em{display:block; margin-top:3px; font-style:normal; font-size:12px; color:var(--muted); line-height:1.55}
+/* 안내 시트(주류 부스·총학생회)의 중립 배지 */
+.badge.plain{background:var(--surface-2); color:var(--muted)}
+
+/* 가격표 */
+.pricelist{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:1px}
+.pricelist li{
+  display:flex; align-items:baseline; justify-content:space-between; gap:14px;
+  padding:9px 0; border-bottom:1px solid var(--line); font-size:13.5px;
+}
+.pricelist li:last-child{border-bottom:0}
+.pricelist span{color:var(--ink)}
+.pricelist em{
+  font-style:normal; font-weight:700; color:var(--accent);
+  font-variant-numeric:tabular-nums; text-align:right; white-space:nowrap; line-height:1.45;
+}
+.blk .foot{margin-top:9px; font-size:12px; color:var(--muted); line-height:1.6}
+
 .closex{margin-left:auto; width:30px; height:30px; border-radius:50%; background:var(--surface-2); color:var(--muted); font-size:15px; line-height:1; flex:none}
 
 /* 스캐너 — 밤에 쓰는 화면이라 남보라 다크로 고정한다 */

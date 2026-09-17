@@ -1,4 +1,5 @@
 import type { Booth } from "../types";
+import type { InfoKey } from "../components/InfoSheet";
 import { CATEGORY_LABEL } from "../types";
 import { CAT_VAR } from "../lib/theme";
 
@@ -10,6 +11,8 @@ interface Props {
   booths: Booth[];
   stamps: Map<string, string>;
   onPick: (booth: Booth) => void;
+  /** 스탬프 대상이 아니지만 안내가 필요한 곳(주류 부스·총학생회) */
+  onInfo: (which: InfoKey) => void;
 }
 
 /** 글자 폭을 em 단위로 어림잡는다 — 한글은 한 칸, 라틴·숫자는 반 칸 남짓 */
@@ -79,6 +82,7 @@ function Inert({
   h,
   label,
   fs = 26,
+  onOpen,
 }: {
   x: number;
   y: number;
@@ -86,17 +90,18 @@ function Inert({
   h: number;
   label: string;
   fs?: number;
+  /** 주면 눌러서 안내를 열 수 있는 칸이 된다 */
+  onOpen?: () => void;
 }) {
-  return (
-    <g>
+  const body = (
+    <>
       <rect
         x={x}
         y={y}
         width={w}
         height={h}
         rx={10}
-        fill="var(--surface)"
-        fillOpacity={0.55}
+        fill="var(--surface-2)"
         stroke="var(--map-inert)"
         strokeWidth={2}
       />
@@ -109,6 +114,26 @@ function Inert({
       >
         {label}
       </text>
+    </>
+  );
+
+  if (!onOpen) return <g>{body}</g>;
+  return (
+    <g
+      className="chip"
+      role="button"
+      tabIndex={0}
+      aria-label={`${label} 안내 보기`}
+      color="var(--map-inert-ink)"
+      onClick={onOpen}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onOpen();
+        }
+      }}
+    >
+      {body}
     </g>
   );
 }
@@ -203,14 +228,12 @@ function Chip({
   );
 }
 
-export default function MapView({ booths, stamps, onPick }: Props) {
+export default function MapView({ booths, stamps, onPick, onInfo }: Props) {
   const legend = Object.keys(CATEGORY_LABEL) as (keyof typeof CAT_VAR)[];
 
   return (
     <div className="mapwrap">
       <svg viewBox={`0 0 ${VW} ${VH}`} role="img" aria-label="달빛제 부스 배치도">
-        <rect x={0} y={0} width={VW} height={VH} rx={20} fill="var(--map-ground)" />
-
         <Inert x={40} y={34} w={210} h={58} label="달성군 보건소" />
         <rect x={300} y={26} width={330} height={74} rx={8} fill="var(--stage)" />
         <text x={465} y={74} fontSize={34} textAnchor="middle" fill="#F0E6FA" letterSpacing={6}>
@@ -239,25 +262,89 @@ export default function MapView({ booths, stamps, onPick }: Props) {
         ))}
 
         {/* 스탬프 대상이 아닌 곳들 */}
-        <Inert x={670} y={1223} w={198} h={130} label="주류 판매" fs={25} />
+        <Inert
+          x={670}
+          y={1223}
+          w={198}
+          h={130}
+          label="주류 판매"
+          fs={25}
+          onOpen={() => onInfo("liquor")}
+        />
 
-        <rect x={40} y={1545} width={340} height={40} rx={6} fill="var(--surface)" fillOpacity={0.45} />
-        <text x={210} y={1572} fontSize={24} textAnchor="middle" fill="var(--map-inert-ink)">
+        <rect
+          x={40}
+          y={1545}
+          width={290}
+          height={40}
+          rx={6}
+          fill="var(--surface-2)"
+          stroke="var(--map-inert)"
+          strokeWidth={2}
+        />
+        <text x={185} y={1572} fontSize={24} textAnchor="middle" fill="var(--map-inert-ink)">
           관람석
         </text>
-        <rect x={560} y={1545} width={280} height={40} rx={6} fill="var(--surface)" fillOpacity={0.45} />
-        <text x={700} y={1572} fontSize={24} textAnchor="middle" fill="var(--map-inert-ink)">
+        <rect
+          x={510}
+          y={1545}
+          width={190}
+          height={40}
+          rx={6}
+          fill="var(--surface-2)"
+          stroke="var(--map-inert)"
+          strokeWidth={2}
+        />
+        <text x={605} y={1572} fontSize={24} textAnchor="middle" fill="var(--map-inert-ink)">
           관람석
         </text>
+
+        {/* 놀이기구. 부스는 아니지만 일화 부스 스탬프를 여기서 받는다 */}
+        <g
+          className="chip"
+          role="button"
+          tabIndex={0}
+          aria-label="바이킹 안내 보기"
+          onClick={() => onInfo("viking")}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              onInfo("viking");
+            }
+          }}
+        >
+          <rect x={712} y={1515} width={156} height={90} rx={10} fill="var(--viking)" />
+          <text x={790} y={1555} fontSize={27} textAnchor="middle" fill="#FFFFFF">
+            바이킹
+          </text>
+          <text x={790} y={1585} fontSize={22} textAnchor="middle" fill="#D6E7F7">
+            일화 스탬프
+          </text>
+        </g>
 
         {/* 굿즈를 받는 곳이라 눈에 띄어야 한다 */}
-        <rect x={390} y={1515} width={160} height={90} rx={10} fill="var(--hq)" />
-        <text x={470} y={1555} fontSize={27} textAnchor="middle" fill="#FFFFFF">
-          총학생회
-        </text>
-        <text x={470} y={1585} fontSize={22} textAnchor="middle" fill="#EBDDF3">
-          굿즈 수령
-        </text>
+        <g
+          className="chip"
+          role="button"
+          tabIndex={0}
+          aria-label="총학생회 안내 보기"
+          onClick={() => onInfo("hq")}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              onInfo("hq");
+            }
+          }}
+        >
+          <rect x={340} y={1515} width={160} height={90} rx={10} fill="var(--hq)" />
+          <text x={420} y={1555} fontSize={27} textAnchor="middle" fill="#FFFFFF">
+            총학생회
+          </text>
+          <text x={420} y={1585} fontSize={22} textAnchor="middle" fill="#EBDDF3">
+            굿즈 수령
+          </text>
+        </g>
+
       </svg>
     </div>
   );

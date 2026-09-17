@@ -213,10 +213,6 @@ function GoodsPane() {
 
   return (
     <div className="admin">
-      <p className="note" style={{ marginTop: 0 }}>
-        참가자가 말한 닉네임을 입력하세요. 13회를 채운 참가자만 지급 대상이며,
-        이미 받아 간 경우 다시 지급되지 않습니다.
-      </p>
 
       <form onSubmit={submit} className="field">
         <label htmlFor="opnick">닉네임</label>
@@ -228,7 +224,7 @@ function GoodsPane() {
           onChange={(e) => setNick(e.target.value)}
         />
         <button className="primary" type="submit" disabled={!nick.trim() || busy}>
-          {busy ? "확인 중…" : "지급 처리"}
+          {busy ? "확인 중…" : "지급"}
         </button>
       </form>
 
@@ -249,7 +245,7 @@ function GoodsPane() {
             {res.error === "NOT_ELIGIBLE" && (
               <>아직 지급 대상이 아닙니다 · 현재 스탬프 {res.stamp_count ?? 0}개 (13개 필요)</>
             )}
-            {res.error === "NO_SUCH_USER" && <>그런 닉네임이 없습니다. 철자를 확인해 주세요.</>}
+            {res.error === "NO_SUCH_USER" && <>닉네임이 없습니다.</>}
             {res.error === "NOT_OPERATOR" && <>이 계정은 운영자로 등록되어 있지 않습니다.</>}
           </div>
         ))}
