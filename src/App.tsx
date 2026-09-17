@@ -3,6 +3,7 @@ import { supabase } from "./supabase";
 import {
   amOperator,
   claimStamp,
+  ensureProfile,
   fetchBooths,
   fetchConfig,
   fetchMyStamps,
@@ -93,7 +94,8 @@ export default function App() {
         fetchMyStamps(),
         fetchMyTickets(),
       ]);
-      setNickname(nick ?? "");
+      // 가입 도중 네트워크가 끊겨 프로필이 비어 있으면 여기서 되살린다
+      setNickname(nick ?? (await ensureProfile()) ?? "");
       setIsOperator(op);
       setBooths(bs);
       setConfig(cfg);
@@ -105,7 +107,11 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (signedIn) void loadAll();
+    if (!signedIn) return;
+    void loadAll();
+    // 스캐너 묶음(약 110KB)을 미리 받아 둔다. 부스 앞에서 셀룰러가 약할 때
+    // "미션 완료"를 누르고 카메라가 안 열리는 상황을 줄인다.
+    void import("./components/Scanner");
   }, [signedIn, loadAll]);
 
   /* /s/<토큰> 으로 들어왔으면 해당 부스 팝업을 연다 */
@@ -182,7 +188,13 @@ export default function App() {
       }
       setScanFail(null);
     } catch (e) {
-      setScanFail(e instanceof Error ? e.message : "처리하지 못했습니다. 다시 시도해 주세요.");
+      // 통신이 끊기거나 서버가 몰릴 때. 원문 대신 무엇을 하면 되는지 알려준다
+      const msg = e instanceof Error ? e.message : "";
+      setScanFail(
+        /rate limit|too many/i.test(msg)
+          ? "접속이 몰려 잠시 밀리고 있습니다. 5초쯤 뒤에 다시 눌러 주세요."
+          : "통신이 불안정합니다. 잠시 뒤 다시 눌러 주세요."
+      );
     }
   }
 

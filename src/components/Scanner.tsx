@@ -30,6 +30,12 @@ export default function Scanner({
   const [camError, setCamError] = useState<string | null>(null);
   const [code, setCode] = useState("");
 
+  // 부모가 리렌더될 때마다 onDecode 의 함수 정체성이 바뀐다.
+  // 그대로 의존성에 두면 30초 타이머 한 번에도 카메라가 껐다 켜져 인식이 끊긴다.
+  // 콜백은 ref 로 최신값만 따라가게 하고, 카메라는 열릴 때 한 번만 시작한다.
+  const onDecodeRef = useRef(onDecode);
+  onDecodeRef.current = onDecode;
+
   useEffect(() => {
     let cancelled = false;
     const reader = new BrowserQRCodeReader(undefined, {
@@ -52,7 +58,7 @@ export default function Scanner({
             const token = extractToken(result.getText());
             if (!token) return;
             controls.stop();
-            onDecode(token);
+            onDecodeRef.current(token);
           }
         );
         if (cancelled) controls.stop();
@@ -68,7 +74,8 @@ export default function Scanner({
       cancelled = true;
       controlsRef.current?.stop();
     };
-  }, [onDecode]);
+    // 의존성 없음: 스캐너가 열려 있는 동안 카메라를 한 번만 잡는다
+  }, []);
 
   return (
     <div className="ov">
