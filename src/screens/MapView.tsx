@@ -15,6 +15,11 @@ interface Props {
   onInfo: (which: InfoKey) => void;
 }
 
+/** 지도 칸이 좁아 이름을 줄여 적는 부스. 팝업·목록에는 원래 이름이 그대로 나온다 */
+const MAP_LABEL: Record<string, string> = {
+  "act-02": "D-Orbital 포스터 전시",
+};
+
 /** 글자 폭을 em 단위로 어림잡는다 — 한글은 한 칸, 라틴·숫자는 반 칸 남짓 */
 function em(s: string) {
   let t = 0;
@@ -166,7 +171,7 @@ function Chip({
   const h = booth.map_h * VH;
   const wide = w >= 180;
   const pad = wide ? 14 : 10;
-  const name = booth.name || booth.team;
+  const name = MAP_LABEL[booth.id] ?? (booth.name || booth.team);
   const tint = CAT_VAR[booth.category];
   const fit = fitName(name, w, h, pad);
   const fs = Math.min(fit.fs, maxFs ?? Infinity);
@@ -250,7 +255,8 @@ export default function MapView({ booths, stamps, onPick, onInfo }: Props) {
     .filter(inRow)
     .map((b) => {
       const w = b.map_w * VW;
-      return fitName(b.name || b.team, w, b.map_h * VH, w >= 180 ? 14 : 10).fs;
+      const label = MAP_LABEL[b.id] ?? (b.name || b.team);
+      return fitName(label, w, b.map_h * VH, w >= 180 ? 14 : 10).fs;
     });
   const rowFs = rowSizes.length ? Math.min(...rowSizes) : 26;
 
@@ -293,9 +299,9 @@ export default function MapView({ booths, stamps, onPick, onInfo }: Props) {
 
         {/* 스탬프 대상이 아닌 곳들 */}
         <Inert
-          x={493}
+          x={466}
           y={1215}
-          w={110}
+          w={102}
           h={130}
           label="주류 판매"
           fs={rowFs}
@@ -303,9 +309,9 @@ export default function MapView({ booths, stamps, onPick, onInfo }: Props) {
           onOpen={() => onInfo("liquor")}
         />
         <Inert
-          x={610}
+          x={578}
           y={1215}
-          w={70}
+          w={86}
           h={130}
           label="일화"
           fs={rowFs}
@@ -316,7 +322,7 @@ export default function MapView({ booths, stamps, onPick, onInfo }: Props) {
 
         <rect
           x={40}
-          y={1545}
+          y={1400}
           width={290}
           height={40}
           rx={6}
@@ -329,7 +335,7 @@ export default function MapView({ booths, stamps, onPick, onInfo }: Props) {
         </text>
         <rect
           x={510}
-          y={1545}
+          y={1400}
           width={190}
           height={40}
           rx={6}
