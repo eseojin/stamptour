@@ -42,7 +42,7 @@ function TicketCard({ tier, ticket }: { tier: 7 | 13; ticket?: Ticket }) {
               <>굿즈 수령 완료 · {hhmm(ticket.goods_claimed_at)}</>
             ) : (
               <>
-                굿즈는 총학생회 본부에서 수령 가능합니다.
+                굿즈(타투 스티커)는 총학생회 본부에서 받을 수 있습니다.
               </>
             )}
           </div>
@@ -97,7 +97,7 @@ export default function Me({
             ))}
           </div>
         ) : (
-          <div className="empty" style={{ padding: "20px 0" }}>
+          <div className="emptystate" style={{ padding: "20px 0" }}>
             아직 없습니다. 지도에서 부스를 골라 미션을 시작하세요.
           </div>
         )}

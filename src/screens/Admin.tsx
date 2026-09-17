@@ -159,7 +159,7 @@ function PeoplePane() {
       {!rows ? (
         <div className="boot" style={{ height: 120 }}><div className="spin" /></div>
       ) : rows.length === 0 ? (
-        <div className="empty">해당하는 참가자가 없습니다.</div>
+        <div className="emptystate">해당하는 참가자가 없습니다.</div>
       ) : (
         <>
           <div className="sechead">{rows.length}명</div>

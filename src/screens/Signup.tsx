@@ -26,9 +26,13 @@ export default function Signup({ onDone }: { onDone: () => void }) {
 
   return (
     <form className="signup" onSubmit={submit}>
-      <div className="moon" aria-hidden="true" />
+      <div className="wordmark" aria-label="달빛제">
+        <span className="serif">달</span>
+        <span className="serif">빛</span>
+        <span className="serif">제</span>
+      </div>
       <div>
-        <h2>달빛제 스탬프투어</h2>
+        <h2>부스 스탬프투어</h2>
         <p>
           부스를 돌며 미션을 완료하고 응모권을 모으세요.
           <br />
@@ -70,6 +74,7 @@ export default function Signup({ onDone }: { onDone: () => void }) {
       <button className="primary" type="submit" disabled={!ready}>
         {busy ? "잠시만요…" : "시작하기"}
       </button>
+
     </form>
   );
 }

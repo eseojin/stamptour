@@ -67,11 +67,12 @@ export type GoodsResult =
       stamp_count?: number;
     };
 
+/** 배부 지도와 같은 이름을 쓴다 */
 export const CATEGORY_LABEL: Record<Category, string> = {
-  food: "Food",
-  bar: "Bar",
-  activity: "Activity",
-  promotion: "Promotion",
+  food: "음식",
+  bar: "안주",
+  activity: "체험",
+  promotion: "프로모션",
 };
 
 /** admin_stats RPC — 운영자 전용 전체 현황 */

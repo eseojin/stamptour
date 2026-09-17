@@ -76,12 +76,7 @@ export default function Scanner({
     <div className="ov">
       <div className="scanner">
         <div className="top">
-          <button
-            className="closex"
-            onClick={onClose}
-            aria-label="닫기"
-            style={{ background: "#1D2026", color: "#C9CDD4" }}
-          >
+          <button className="closex" onClick={onClose} aria-label="닫기">
             ✕
           </button>
           <div>

@@ -1,13 +1,75 @@
 import type { Booth } from "../types";
+import { CATEGORY_LABEL } from "../types";
 import { CAT_VAR } from "../lib/theme";
 
+/** 부스 좌표는 이 viewBox 기준 비율로 DB에 들어 있다 */
 const VW = 880;
-const VH = 1430;
+const VH = 1640;
 
 interface Props {
   booths: Booth[];
   stamps: Map<string, string>;
   onPick: (booth: Booth) => void;
+}
+
+/** 글자 폭을 em 단위로 어림잡는다 — 한글은 한 칸, 라틴·숫자는 반 칸 남짓 */
+function em(s: string) {
+  let t = 0;
+  for (const c of s) {
+    if (/\s/.test(c)) t += 0.3;
+    else if (/[()[\].,·:!?]/.test(c)) t += 0.45;
+    else if (/[A-Za-z0-9+\-/&]/.test(c)) t += 0.56;
+    else t += 1;
+  }
+  return t;
+}
+
+/** 이름을 n줄로 나눈다. 끊을 수 있는 자리 중 가장 긴 줄이 짧아지는 조합을 고른다 */
+function splitLines(name: string, n: number): string[] | null {
+  if (n === 1) return [name];
+  const parts = name.split(/(?<=\s)|(?<=-)/).filter(Boolean);
+  if (parts.length < n) return null;
+
+  const found: { widest: number; lines: string[] }[] = [];
+  const cuts: number[] = [];
+  const pick = (start: number, left: number) => {
+    if (left === 0) {
+      const idx = [0, ...cuts, parts.length];
+      const lines: string[] = [];
+      for (let i = 0; i < n; i++) lines.push(parts.slice(idx[i], idx[i + 1]).join("").trim());
+      if (lines.some((l) => !l)) return;
+      found.push({ widest: Math.max(...lines.map(em)), lines });
+      return;
+    }
+    for (let i = start; i <= parts.length - left; i++) {
+      cuts.push(i);
+      pick(i + 1, left - 1);
+      cuts.pop();
+    }
+  };
+  pick(1, n - 1);
+  if (found.length === 0) return null;
+  found.sort((x, y) => x.widest - y.widest);
+  return found[0].lines;
+}
+
+/**
+ * 부스 이름이 잘리지 않도록 줄 수와 글자 크기를 함께 고른다.
+ * 줄을 늘리면 한 줄이 짧아져 글자를 키울 수 있고, 대신 높이를 더 쓴다.
+ */
+function fitName(name: string, w: number, h: number, pad: number) {
+  const availW = w - pad * 2;
+  const availH = h - 34; // 위쪽 번호 자리를 뺀 높이
+  const CAP = 26;
+  let best = { fs: 0, lines: [name] };
+  for (let n = 1; n <= 3; n++) {
+    const lines = splitLines(name, n);
+    if (!lines) continue;
+    const widest = Math.max(...lines.map(em));
+    const fs = Math.min(CAP, availW / widest, availH / (n * 1.24));
+    if (fs > best.fs + 0.01) best = { fs, lines };
+  }
+  return best;
 }
 
 function Inert({
@@ -16,7 +78,6 @@ function Inert({
   w,
   h,
   label,
-  sub,
   fs = 26,
 }: {
   x: number;
@@ -24,8 +85,6 @@ function Inert({
   w: number;
   h: number;
   label: string;
-  sub?: string;
-  /** 글자 크기. 블록이 커지면 같이 키운다 */
   fs?: number;
 }) {
   return (
@@ -35,31 +94,21 @@ function Inert({
         y={y}
         width={w}
         height={h}
-        rx={8}
-        fill="var(--surface-2)"
-        stroke="var(--line)"
+        rx={10}
+        fill="var(--surface)"
+        fillOpacity={0.55}
+        stroke="var(--map-inert)"
         strokeWidth={2}
       />
       <text
         x={x + w / 2}
-        y={y + h / 2 + (sub ? -fs * 0.18 : fs * 0.35)}
+        y={y + h / 2 + fs * 0.35}
         fontSize={fs}
         textAnchor="middle"
-        fill="var(--muted)"
+        fill="var(--map-inert-ink)"
       >
         {label}
       </text>
-      {sub && (
-        <text
-          x={x + w / 2}
-          y={y + h / 2 + fs * 0.95}
-          fontSize={fs * 0.8}
-          textAnchor="middle"
-          fill="var(--muted)"
-        >
-          {sub}
-        </text>
-      )}
     </g>
   );
 }
@@ -80,16 +129,21 @@ function Chip({
   const w = booth.map_w * VW;
   const h = booth.map_h * VH;
   const wide = w >= 150;
-  const raw = booth.name || booth.team;
-  const label = wide ? (raw.length > 7 ? raw.slice(0, 6) + "…" : raw) : raw.trim().slice(0, 4);
+  const pad = wide ? 14 : 10;
+  const name = booth.name || booth.team;
   const tint = CAT_VAR[booth.category];
+  const { fs, lines } = fitName(name, w, h, pad);
+  const lh = fs * 1.24;
+  const top = y + 26 + Math.max(0, (h - 34 - lines.length * lh) / 2);
+  const ink = done ? "var(--surface)" : "var(--ink)";
+  const r = wide ? 13 : 11;
 
   return (
     <g
       className="chip"
       role="button"
       tabIndex={0}
-      aria-label={`${raw} ${done ? "완료" : "미완료"}`}
+      aria-label={`${name} ${done ? "완료" : "미완료"}`}
       onClick={onPick}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
@@ -106,56 +160,40 @@ function Chip({
         height={h}
         rx={10}
         fill={done ? "var(--stamp)" : tint}
-        fillOpacity={done ? 1 : 0.2}
+        fillOpacity={done ? 1 : 0.42}
         stroke={done ? "var(--stamp)" : tint}
         strokeWidth={2}
       />
-      {wide ? (
-        <>
-          <text x={x + 13} y={y + 34} fontSize={24} fontWeight={700} fill={done ? "var(--surface)" : "var(--ink)"}>
-            {no}
-          </text>
-          <text x={x + 13} y={y + 66} fontSize={26} fill={done ? "var(--surface)" : "var(--ink-2)"}>
-            {label}
-          </text>
-        </>
-      ) : (
-        <>
-          <text
-            x={x + w / 2}
-            y={y + 40}
-            fontSize={30}
-            fontWeight={700}
-            textAnchor="middle"
-            fill={done ? "var(--surface)" : "var(--ink)"}
-          >
-            {no}
-          </text>
-          <text
-            x={x + w / 2}
-            y={y + 70}
-            fontSize={20}
-            textAnchor="middle"
-            fill={done ? "var(--surface)" : "var(--ink-2)"}
-          >
-            {label}
-          </text>
-        </>
-      )}
-      {done && (
-        <g
-          transform={
-            wide
-              ? `translate(${x + w - 28} ${y + 28}) rotate(-12)`
-              : `translate(${x + w - 16} ${y + 16}) rotate(-12)`
-          }
+      <text
+        x={x + pad}
+        y={y + 22}
+        fontSize={16}
+        fontWeight={700}
+        fill={ink}
+        opacity={done ? 0.85 : 0.7}
+      >
+        {no}
+      </text>
+      {lines.map((line, i) => (
+        <text
+          key={i}
+          x={wide ? x + pad : x + w / 2}
+          y={top + lh * i + fs * 0.84}
+          fontSize={fs.toFixed(1)}
+          textAnchor={wide ? "start" : "middle"}
+          fill={done ? "var(--surface)" : "var(--ink-2)"}
         >
-          <circle r={wide ? 15 : 10.5} fill="none" stroke="var(--surface)" strokeWidth={wide ? 2.5 : 2} />
+          {line}
+        </text>
+      ))}
+      {done && (
+        <g transform={`translate(${x + w - r - 8} ${y + r + 8}) rotate(-12)`}>
+          <circle r={r} fill="none" stroke="var(--surface)" strokeWidth={2.2} />
           <path
-            d={wide ? "M-6.5 0 L-2 5.5 L7.5 -5.5" : "M-4.5 0 L-1.5 3.8 L5.2 -3.8"}
+            d={`M${(-r * 0.42).toFixed(1)} 0 L${(-r * 0.12).toFixed(1)} ${(r * 0.34).toFixed(1)} L${(r * 0.46).toFixed(1)} ${(-r * 0.34).toFixed(1)}`}
             fill="none"
             stroke="var(--surface)"
-            strokeWidth={wide ? 3 : 2.4}
+            strokeWidth={2.6}
             strokeLinecap="round"
             strokeLinejoin="round"
           />
@@ -166,37 +204,32 @@ function Chip({
 }
 
 export default function MapView({ booths, stamps, onPick }: Props) {
-  const legend: [string, keyof typeof CAT_VAR][] = [
-    ["Food", "food"],
-    ["Bar", "bar"],
-    ["Activity", "activity"],
-    ["Promotion", "promotion"],
-  ];
+  const legend = Object.keys(CATEGORY_LABEL) as (keyof typeof CAT_VAR)[];
 
   return (
     <div className="mapwrap">
-      {/* 부스 좌표는 VH(1430) 기준 비율이라 VH 는 그대로 두고,
-          총학생회 본부 블록이 아래 끝에 붙지 않도록 viewBox 에만 여백을 더한다 */}
-      <svg viewBox={`0 0 ${VW} ${VH + 26}`} role="img" aria-label="달빛제 부스 배치도">
+      <svg viewBox={`0 0 ${VW} ${VH}`} role="img" aria-label="달빛제 부스 배치도">
+        <rect x={0} y={0} width={VW} height={VH} rx={20} fill="var(--map-ground)" />
+
         <Inert x={40} y={34} w={210} h={58} label="달성군 보건소" />
-        <rect x={300} y={26} width={330} height={74} rx={8} fill="none" stroke="var(--ink-2)" strokeWidth={2} />
-        <text x={465} y={72} fontSize={34} textAnchor="middle" fill="var(--ink-2)" letterSpacing={4}>
+        <rect x={300} y={26} width={330} height={74} rx={8} fill="var(--stage)" />
+        <text x={465} y={74} fontSize={34} textAnchor="middle" fill="#F0E6FA" letterSpacing={6}>
           STAGE
         </text>
 
-        {legend.map(([label, key], i) => (
-          <g key={key} transform={`translate(348 ${560 + i * 46})`}>
+        {legend.map((key, i) => (
+          <g key={key} transform={`translate(352 ${575 + i * 50})`}>
             <rect
-              width={26}
-              height={26}
-              rx={5}
+              width={28}
+              height={28}
+              rx={6}
               fill={CAT_VAR[key]}
-              fillOpacity={0.2}
+              fillOpacity={0.42}
               stroke={CAT_VAR[key]}
               strokeWidth={2}
             />
-            <text x={36} y={21} fontSize={25} fill="var(--muted)">
-              {label}
+            <text x={40} y={22} fontSize={25} fill="var(--map-inert-ink)">
+              {CATEGORY_LABEL[key]} 부스
             </text>
           </g>
         ))}
@@ -205,20 +238,26 @@ export default function MapView({ booths, stamps, onPick }: Props) {
           <Chip key={b.id} booth={b} no={i + 1} done={stamps.has(b.id)} onPick={() => onPick(b)} />
         ))}
 
-        <Inert x={374} y={1240} w={86} h={100} label="술" />
-        <Inert x={576} y={1240} w={86} h={100} label="일화"/>
+        {/* 스탬프 대상이 아닌 곳들 */}
+        <Inert x={670} y={1223} w={198} h={130} label="주류 판매" fs={25} />
 
-        <rect x={40} y={1368} width={340} height={40} rx={6} fill="none" stroke="var(--line)" strokeWidth={2} />
-        <text x={210} y={1394} fontSize={24} textAnchor="middle" fill="var(--muted)">
+        <rect x={40} y={1545} width={340} height={40} rx={6} fill="var(--surface)" fillOpacity={0.45} />
+        <text x={210} y={1572} fontSize={24} textAnchor="middle" fill="var(--map-inert-ink)">
           관람석
         </text>
-        <rect x={560} y={1368} width={280} height={40} rx={6} fill="none" stroke="var(--line)" strokeWidth={2} />
-        <text x={700} y={1394} fontSize={24} textAnchor="middle" fill="var(--muted)">
+        <rect x={560} y={1545} width={280} height={40} rx={6} fill="var(--surface)" fillOpacity={0.45} />
+        <text x={700} y={1572} fontSize={24} textAnchor="middle" fill="var(--map-inert-ink)">
           관람석
         </text>
 
-        {/* 굿즈를 받는 곳이라 눈에 띄어야 한다. 관람석 위아래로 걸치게 크게 둔다 */}
-        <Inert x={390} y={1338} w={160} h={90} label="총학생회" fs={30} />
+        {/* 굿즈를 받는 곳이라 눈에 띄어야 한다 */}
+        <rect x={390} y={1515} width={160} height={90} rx={10} fill="var(--hq)" />
+        <text x={470} y={1555} fontSize={27} textAnchor="middle" fill="#FFFFFF">
+          총학생회
+        </text>
+        <text x={470} y={1585} fontSize={22} textAnchor="middle" fill="#EBDDF3">
+          굿즈 수령
+        </text>
       </svg>
     </div>
   );

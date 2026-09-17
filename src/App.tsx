@@ -174,7 +174,7 @@ export default function App() {
               ? `13회까지 ${13 - n}개`
               : "모든 보상을 받았습니다";
         setToast(
-          `${booth.name || booth.team} 미션 완료 · ${next}` +
+          `${booth.name || booth.team} ${booth.minigame ? "미션 완료" : "스탬프 적립"} · ${next}` +
             (!r.tickets_open && n < 13 ? " (응모권은 마감)" : "")
         );
         setTimeout(() => setToast(null), 2600);

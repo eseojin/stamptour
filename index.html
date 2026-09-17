@@ -3,12 +3,16 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
-    <meta name="theme-color" content="#0D0E11" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <meta name="theme-color" content="#1B1937" />
+    <!-- 본문 서체. 글자가 쓰이는 구간만 내려받는 동적 서브셋이라 첫 화면이 가볍다 -->
+    <link rel="stylesheet" href="/fonts/pretendard/pretendard.css" />
+    <!-- 달빛제 표제 서체. 첫 화면 로고에 바로 쓰이므로 미리 받아 둔다 -->
     <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Instrument+Serif&display=swap"
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href="/fonts/nmf/NMFClassic-Medium.subset.woff2"
+      crossorigin
     />
     <title>달빛제 스탬프투어</title>
   </head>

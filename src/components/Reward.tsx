@@ -5,21 +5,31 @@ interface Props {
   onClose: () => void;
 }
 
+/** 달빛제 공지물의 이중선 프레임. 응모권을 받는 이 순간에만 쓴다 */
+function Frame() {
+  return (
+    <div className="frame" aria-hidden="true">
+      <i />
+      <i />
+      <i />
+      <i />
+    </div>
+  );
+}
+
 function Seal() {
   return (
-    <svg className="seal" viewBox="0 0 64 64" fill="none" aria-hidden="true">
-      <g transform="rotate(-10 32 32)">
-        <circle cx="32" cy="32" r="27" stroke="var(--ink)" strokeWidth="3" />
-        <circle cx="32" cy="32" r="21" stroke="var(--ink)" strokeWidth="1" strokeDasharray="3 4" />
+    <div className="seal" aria-hidden="true">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
         <path
-          d="M22 32.5 L29 40 L43 24"
-          stroke="var(--ink)"
-          strokeWidth="4"
+          d="M5 12.5 9.5 17 19 7"
+          stroke="#F0E6FA"
+          strokeWidth="2.6"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
-      </g>
-    </svg>
+      </svg>
+    </div>
   );
 }
 
@@ -29,6 +39,7 @@ export default function Reward({ tier, serial, nickname, onClose }: Props) {
     <div className="ov">
       <div className="scrim" onClick={onClose} />
       <div className="result" role="dialog" aria-modal="true">
+        <Frame />
         <Seal />
         <div className="kicker">{tier}회 달성</div>
 
@@ -49,10 +60,10 @@ export default function Reward({ tier, serial, nickname, onClose }: Props) {
           <>
             <h3>{noSerial ? "굿즈 수령 대상입니다" : "응모권과 굿즈를 받았습니다"}</h3>
             {noSerial ? (
-              <p style={{ marginTop: 10 }}>
+              <p>
                 응모권 발급은 19:30에 마감되어
                 <br />
-                이번에는 굿즈만 받으실 수 있습니다.
+                굿즈만 받으실 수 있습니다.
               </p>
             ) : (
               <>
@@ -66,8 +77,7 @@ export default function Reward({ tier, serial, nickname, onClose }: Props) {
             <div className="goodsbox">
               <b>굿즈 수령</b>
               <br />
-              총학생회 본부에서 <b>{nickname}</b> 이름을 말씀하시면 됩니다. 내 정보 화면에서
-              언제든 다시 확인할 수 있습니다.
+              총학생회 본부에서 타투 스티커를 받으실 수 있습니다.
             </div>
           </>
         )}

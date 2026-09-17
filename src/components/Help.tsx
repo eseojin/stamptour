@@ -54,7 +54,7 @@ export default function Help({ config, boothCount, onClose }: Props) {
                 <span className="n">13개</span>
                 <span className="d">
                   응모권 1장 + 굿즈
-                  <em>굿즈는 총학생회 본부에서 수령 가능</em>
+                  <em>굿즈(타투 스티커)는 총학생회 본부에서 수령</em>
                 </span>
               </div>
             </div>

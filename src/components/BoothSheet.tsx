@@ -29,8 +29,8 @@ export default function BoothSheet({
       <div className="sheet" role="dialog" aria-modal="true" aria-label={booth.name || booth.team}>
         <div className="grab" />
         <div className="hd">
-          <span className="badge" style={{ color: CAT_VAR[booth.category] }}>
-            {CATEGORY_LABEL[booth.category]}
+          <span className="badge" style={{ background: CAT_VAR[booth.category] }}>
+            {CATEGORY_LABEL[booth.category]} 부스
           </span>
           <button className="closex" onClick={onClose} aria-label="닫기">
             ✕
@@ -61,10 +61,13 @@ export default function BoothSheet({
             </div>
           )}
 
-          <div className="blk mission">
-            <div className="k">미션</div>
-            <p>{booth.minigame}</p>
-          </div>
+          {/* 일화처럼 미션이 따로 없는 부스는 미션 칸 자체를 두지 않는다 */}
+          {booth.minigame && (
+            <div className="blk mission">
+              <div className="k">미션</div>
+              <p>{booth.minigame}</p>
+            </div>
+          )}
         </div>
 
         <div className="ft">
@@ -78,7 +81,13 @@ export default function BoothSheet({
             </button>
           ) : (
             <button className="primary" onClick={onScan}>
-              {hasToken ? "QR 확인됨 · 미션 완료" : "미션 완료"}
+              {booth.minigame
+                ? hasToken
+                  ? "QR 확인됨 · 미션 완료"
+                  : "미션 완료"
+                : hasToken
+                  ? "QR 확인됨 · 스탬프 받기"
+                  : "스탬프 받기"}
             </button>
           )}
         </div>
