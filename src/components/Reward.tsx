@@ -33,7 +33,7 @@ function Seal() {
   );
 }
 
-export default function Reward({ tier, serial, nickname, onClose }: Props) {
+export default function Reward({ tier, serial, onClose }: Props) {
   const noSerial = serial === null;
   return (
     <div className="ov">
