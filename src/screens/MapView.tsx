@@ -271,6 +271,16 @@ export default function MapView({ booths, stamps, onPick, onInfo }: Props) {
           fs={25}
           onOpen={() => onInfo("liquor")}
         />
+        {/* 일화 부스는 스탬프 대상이 아니라 안내만 연다 */}
+        <Inert
+          x={672}
+          y={1370}
+          w={198}
+          h={130}
+          label="일화"
+          fs={26}
+          onOpen={() => onInfo("ilhwa")}
+        />
 
         <rect
           x={40}
@@ -298,29 +308,6 @@ export default function MapView({ booths, stamps, onPick, onInfo }: Props) {
         <text x={605} y={1572} fontSize={24} textAnchor="middle" fill="var(--map-inert-ink)">
           관람석
         </text>
-
-        {/* 놀이기구. 부스는 아니지만 일화 부스 스탬프를 여기서 받는다 */}
-        <g
-          className="chip"
-          role="button"
-          tabIndex={0}
-          aria-label="바이킹 안내 보기"
-          onClick={() => onInfo("viking")}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              onInfo("viking");
-            }
-          }}
-        >
-          <rect x={712} y={1515} width={156} height={90} rx={10} fill="var(--viking)" />
-          <text x={790} y={1555} fontSize={27} textAnchor="middle" fill="#FFFFFF">
-            바이킹
-          </text>
-          <text x={790} y={1585} fontSize={22} textAnchor="middle" fill="#D6E7F7">
-            일화 스탬프
-          </text>
-        </g>
 
         {/* 굿즈를 받는 곳이라 눈에 띄어야 한다 */}
         <g

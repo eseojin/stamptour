@@ -1,5 +1,5 @@
 /** 스탬프 대상이 아니지만 현장에서 찾아가야 하는 곳들 — 지도에서 눌러 열어본다 */
-export type InfoKey = "liquor" | "hq" | "viking";
+export type InfoKey = "liquor" | "hq" | "ilhwa";
 
 interface Props {
   which: InfoKey;
@@ -54,13 +54,13 @@ function Hq() {
       <div className="blk mission">
         <div className="k">스탬프투어 상품</div>
         <p>
-          13회를 채우면 이곳에서 <b>타투 스티커</b>를 받습니다. 닉네임을 말씀해 주세요.
+          스탬프 13회를 채우면 <b>타투 스티커</b>를 수령하실 수 있습니다.
         </p>
       </div>
 
       <div className="blk">
         <div className="k">첫비 본부</div>
-        <p>행사 안내와 분실물 보관을 맡습니다.</p>
+        <p>행사 안내 및 분실물 보관</p>
       </div>
 
       <div className="blk">
@@ -87,39 +87,34 @@ function Hq() {
             </em>
           </li>
         </ul>
-        <p className="foot">굿즈는 입장팔찌 배부소의 첫비 STORE에서 판매합니다.</p>
       </div>
     </>
   );
 }
 
-function Viking() {
+function Ilhwa() {
   return (
     <>
       <div>
-        <h3>바이킹</h3>
-        <div className="team">24번 일화 부스 이벤트</div>
+        <h3>일화</h3>
+        <div className="team">프로모션 부스</div>
       </div>
 
-      <div className="blk mission">
-        <div className="k">스탬프</div>
+      <div className="blk">
+        <div className="k">무료 음료</div>
+        <p>일화의 다양한 음료를 무료로 증정합니다! 본인의 한계를 시험하세요. (총 2,000개)</p>
+      </div>
+
+      <div className="blk">
+        <div className="k">숙취해소제</div>
         <p>
-          바이킹을 <b>1회 탑승</b>하면 일화 부스의 스탬프를 받을 수 있습니다.
+          부스 안에서 익수제약 숙취해소제 ‘취어스on’을 1인 1개씩 받을 수 있습니다. (70개 한정)
         </p>
       </div>
 
       <div className="blk">
-        <div className="k">탑승 요금</div>
-        <ul className="pricelist">
-          <li>
-            <span>가격</span>
-            <em>4,000원</em>
-          </li>
-          <li>
-            <span>VIP</span>
-            <em>무료 (학생회비 납부자)</em>
-          </li>
-        </ul>
+        <div className="k">음료</div>
+        <p>부르르 사이다·콜라, 천연사이다, 애사비, 일화차시(호박팥차)</p>
       </div>
     </>
   );
@@ -139,7 +134,7 @@ export default function InfoSheet({ which, onClose }: Props) {
         </div>
 
         <div className="bd">
-          {which === "liquor" ? <Liquor /> : which === "viking" ? <Viking /> : <Hq />}
+          {which === "liquor" ? <Liquor /> : which === "ilhwa" ? <Ilhwa /> : <Hq />}
         </div>
 
         <div className="ft">
