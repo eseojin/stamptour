@@ -7,30 +7,7 @@ interface Props {
 
 /** 달빛제 공지물의 이중선 프레임. 응모권을 받는 이 순간에만 쓴다 */
 function Frame() {
-  return (
-    <div className="frame" aria-hidden="true">
-      <i />
-      <i />
-      <i />
-      <i />
-    </div>
-  );
-}
-
-function Seal() {
-  return (
-    <div className="seal" aria-hidden="true">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-        <path
-          d="M5 12.5 9.5 17 19 7"
-          stroke="#F0E6FA"
-          strokeWidth="2.6"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    </div>
-  );
+  return <div className="frame" aria-hidden="true" />;
 }
 
 export default function Reward({ tier, serial, onClose }: Props) {
@@ -40,7 +17,6 @@ export default function Reward({ tier, serial, onClose }: Props) {
       <div className="scrim" onClick={onClose} />
       <div className="result" role="dialog" aria-modal="true">
         <Frame />
-        <Seal />
         <div className="kicker">{tier}회 달성</div>
 
         {tier === 7 ? (

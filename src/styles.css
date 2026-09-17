@@ -127,8 +127,10 @@ button{font:inherit; color:inherit; cursor:pointer; border:0; background:none}
 .tabs button[aria-selected=true]{color:var(--accent); border-bottom-color:var(--accent); font-weight:700}
 
 /* 지도 */
-.mapwrap{padding:12px 10px 18px}
-.mapwrap svg{width:100%; height:auto; display:block}
+/* 지도는 스크롤 없이 한 화면에 들어오도록 남은 높이에 맞춰 줄인다 */
+.mapscroll{overflow:hidden; display:flex}
+.mapwrap{padding:10px; flex:1; min-height:0; display:flex}
+.mapwrap svg{width:100%; height:100%; display:block}
 .chip{cursor:pointer}
 .chip rect{transition:opacity .2s}
 .chip:hover rect.bg{opacity:.85}
@@ -259,21 +261,15 @@ button{font:inherit; color:inherit; cursor:pointer; border:0; background:none}
 /* 결과 — 공지물의 이중선 프레임을 여기서만 쓴다 */
 .result{
   position:relative; margin:auto; width:min(330px,88%); background:var(--surface);
-  border-radius:18px; padding:30px 24px 24px; text-align:center;
+  border-radius:18px; padding:32px 28px 26px; text-align:center;
   animation:pop .3s cubic-bezier(.2,.9,.3,1);
 }
 @keyframes pop{from{transform:scale(.95);opacity:0}to{transform:none;opacity:1}}
-.frame{position:absolute; inset:8px; pointer-events:none; border:1px solid var(--line); border-radius:11px}
-.frame::before{content:""; position:absolute; inset:5px; border:1px solid #C6A5E4; border-radius:7px; opacity:.75}
-.frame i{position:absolute; width:5px; height:5px; background:#C6A5E4}
-.frame i:nth-child(1){left:-3px;top:-3px}
-.frame i:nth-child(2){right:-3px;top:-3px}
-.frame i:nth-child(3){left:-3px;bottom:-3px}
-.frame i:nth-child(4){right:-3px;bottom:-3px}
-.result .seal{
-  width:52px; height:52px; margin:0 auto 14px; border-radius:50%;
-  background:linear-gradient(150deg,var(--night-a),var(--night-b));
-  display:grid; place-items:center;
+/* 달빛제 공지물의 이중선 프레임. 모서리 장식은 그대로 두고 변만 늘어나도록 border-image 로 그린다 */
+.frame{
+  position:absolute; inset:8px; pointer-events:none;
+  border:56px solid transparent;
+  border-image:url(/frame/dalbit-frame.png) 175 stretch;
 }
 .result h3{margin:5px 0 0; font-size:19px; letter-spacing:-.025em}
 .result p{margin:10px 0 0; font-size:13px; color:var(--muted); line-height:1.6}
@@ -310,7 +306,7 @@ body{overscroll-behavior:none}
 .camnote{position:absolute; bottom:12px; left:14px; right:14px; z-index:3; text-align:center; font-size:12px; color:#A396BC}
 .manual{display:flex; gap:8px; padding:12px 14px; background:#1B1830; border-top:1px solid #2C2645}
 .manual input{flex:1; background:#211D33; border:1px solid #322B49; border-radius:10px; padding:11px 12px; color:#F1ECF8; font-size:16px; letter-spacing:.3em; text-align:center}
-.manual button{border-radius:10px; padding:0 18px; color:#fff; background:var(--accent); font-size:13px; font-weight:700}
+.manual button{flex:none; white-space:nowrap; border-radius:10px; padding:0 20px; color:#fff; background:var(--accent); font-size:14px; font-weight:700}
 
 /* 운영자 화면 */
 .admin{padding:18px 16px 28px; display:flex; flex-direction:column; gap:14px}

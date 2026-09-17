@@ -72,7 +72,7 @@ export default function Signup({ onDone }: { onDone: () => void }) {
       )}
 
       <button className="primary" type="submit" disabled={!ready}>
-        {busy ? "잠시만요…" : "시작하기"}
+        {busy ? "로그인 중" : "시작하기"}
       </button>
 
     </form>

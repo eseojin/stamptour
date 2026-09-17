@@ -6,7 +6,6 @@ import type { Booth } from "../types";
 
 interface Props {
   booth: Booth;
-  no: number;
   failure: string | null;
   onClose: () => void;
   onDecode: (token: string) => void;
@@ -21,7 +20,6 @@ function isInAppBrowser() {
 
 export default function Scanner({
   booth,
-  no,
   failure,
   onClose,
   onDecode,
@@ -81,7 +79,6 @@ export default function Scanner({
           </button>
           <div>
             <div className="ttl">{booth.name || booth.team}</div>
-            <div className="sb">{no}번 부스의 QR을 비춰 주세요</div>
           </div>
         </div>
 
@@ -112,7 +109,7 @@ export default function Scanner({
             autoCorrect="off"
             spellCheck={false}
             maxLength={6}
-            placeholder="6자리 코드"
+            placeholder="코드입력"
             value={code}
             onChange={(e) =>
               setCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ""))

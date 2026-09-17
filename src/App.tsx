@@ -14,7 +14,6 @@ import { hhmm, untilText } from "./lib/theme";
 import type { Booth, EventConfig, Ticket } from "./types";
 import Signup from "./screens/Signup";
 import MapView from "./screens/MapView";
-import ListView from "./screens/ListView";
 import Me from "./screens/Me";
 import Admin from "./screens/Admin";
 import BoothSheet from "./components/BoothSheet";
@@ -38,7 +37,7 @@ const ENTRY_TOKEN = (() => {
   return m[1];
 })();
 
-type Tab = "map" | "list" | "me" | "admin";
+type Tab = "map" | "me" | "admin";
 type Overlay =
   | { kind: "sheet"; booth: Booth; token?: string }
   | { kind: "scan"; booth: Booth }
@@ -276,21 +275,10 @@ export default function App() {
         </div>
       </div>
 
-      {tab !== "me" && tab !== "admin" && (
-        <div className="tabs" role="tablist">
-          <button role="tab" aria-selected={tab === "map"} onClick={() => setTab("map")}>
-            지도
-          </button>
-          <button role="tab" aria-selected={tab === "list"} onClick={() => setTab("list")}>
-            목록
-          </button>
-        </div>
-      )}
-
       {tab === "admin" && isOperator ? (
         <Admin />
       ) : (
-      <div className="scroll">
+      <div className={tab === "map" ? "scroll mapscroll" : "scroll"}>
         {tab === "me" ? (
           <Me
             nickname={nickname}
@@ -298,8 +286,6 @@ export default function App() {
             stamps={stamps}
             tickets={tickets}
           />
-        ) : tab === "list" ? (
-          <ListView booths={booths} stamps={stamps} onPick={(b) => setOverlay({ kind: "sheet", booth: b })} />
         ) : (
           <MapView
             booths={booths}
@@ -312,7 +298,7 @@ export default function App() {
       )}
 
       <div className="tabbar">
-        <button aria-current={tab === "map" || tab === "list" ? "page" : "false"} onClick={() => setTab("map")}>
+        <button aria-current={tab === "map" ? "page" : "false"} onClick={() => setTab("map")}>
           <svg className="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
             <path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z" />
             <path d="M9 4v14M15 6v14" />
@@ -370,7 +356,6 @@ export default function App() {
         >
           <Scanner
           booth={overlay.booth}
-          no={boothNo.get(overlay.booth.id) ?? 0}
           failure={scanFail}
           onClose={() => {
             setOverlay(null);

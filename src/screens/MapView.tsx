@@ -5,7 +5,7 @@ import { CAT_VAR } from "../lib/theme";
 
 /** 부스 좌표는 이 viewBox 기준 비율로 DB에 들어 있다 */
 const VW = 880;
-const VH = 1500;
+const VH = 1400;
 
 interface Props {
   booths: Booth[];
@@ -300,9 +300,9 @@ export default function MapView({ booths, stamps, onPick, onInfo }: Props) {
         {/* 스탬프 대상이 아닌 곳들 */}
         <Inert
           x={466}
-          y={1215}
+          y={1140}
           w={102}
-          h={130}
+          h={126}
           label="주류 판매"
           fs={rowFs}
           inRow
@@ -310,9 +310,9 @@ export default function MapView({ booths, stamps, onPick, onInfo }: Props) {
         />
         <Inert
           x={578}
-          y={1215}
+          y={1140}
           w={86}
-          h={130}
+          h={126}
           label="일화"
           fs={rowFs}
           inRow
@@ -322,28 +322,28 @@ export default function MapView({ booths, stamps, onPick, onInfo }: Props) {
 
         <rect
           x={40}
-          y={1400}
+          y={1316}
           width={290}
-          height={40}
+          height={36}
           rx={6}
           fill="var(--surface-2)"
           stroke="var(--map-inert)"
           strokeWidth={2}
         />
-        <text x={185} y={1427} fontSize={24} textAnchor="middle" fill="var(--map-inert-ink)">
+        <text x={185} y={1341} fontSize={24} textAnchor="middle" fill="var(--map-inert-ink)">
           관람석
         </text>
         <rect
           x={510}
-          y={1400}
+          y={1316}
           width={190}
-          height={40}
+          height={36}
           rx={6}
           fill="var(--surface-2)"
           stroke="var(--map-inert)"
           strokeWidth={2}
         />
-        <text x={605} y={1427} fontSize={24} textAnchor="middle" fill="var(--map-inert-ink)">
+        <text x={605} y={1341} fontSize={24} textAnchor="middle" fill="var(--map-inert-ink)">
           관람석
         </text>
 
@@ -361,11 +361,11 @@ export default function MapView({ booths, stamps, onPick, onInfo }: Props) {
             }
           }}
         >
-          <rect x={340} y={1370} width={160} height={90} rx={10} fill="var(--hq)" />
-          <text x={420} y={1410} fontSize={27} textAnchor="middle" fill="#FFFFFF">
+          <rect x={340} y={1292} width={160} height={84} rx={10} fill="var(--hq)" />
+          <text x={420} y={1328} fontSize={27} textAnchor="middle" fill="#FFFFFF">
             총학생회
           </text>
-          <text x={420} y={1440} fontSize={22} textAnchor="middle" fill="#EBDDF3">
+          <text x={420} y={1358} fontSize={22} textAnchor="middle" fill="#EBDDF3">
             굿즈 수령
           </text>
         </g>
