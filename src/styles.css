@@ -26,7 +26,7 @@
 *{box-sizing:border-box}
 body{
   margin:0; background:var(--ground); color:var(--ink);
-  font-family:Pretendard,"Pretendard Variable",-apple-system,BlinkMacSystemFont,
+  font-family:"Wanted Sans Variable","Wanted Sans",-apple-system,BlinkMacSystemFont,
     "Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
   font-size:14px; line-height:1.5; -webkit-font-smoothing:antialiased;
 }

@@ -384,7 +384,7 @@ export default function App() {
       )}
 
       {overlay?.kind === "help" && (
-        <Help config={config} boothCount={booths.length} onClose={() => setOverlay(null)} />
+        <Help config={config} onClose={() => setOverlay(null)} />
       )}
 
       {overlay?.kind === "reward" && (

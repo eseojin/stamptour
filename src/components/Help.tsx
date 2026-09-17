@@ -3,12 +3,11 @@ import type { EventConfig } from "../types";
 
 interface Props {
   config: EventConfig;
-  boothCount: number;
   onClose: () => void;
 }
 
 /** 상단 "스탬프 적립 현황" 옆 물음표로 여는 안내. 규칙을 한 곳에 모아 둔다. */
-export default function Help({ config, boothCount, onClose }: Props) {
+export default function Help({ config, onClose }: Props) {
   const open = hhmm(config.stamp_opens_at);
   const close = hhmm(config.stamp_closes_at);
   const dead = hhmm(config.ticket_deadline);

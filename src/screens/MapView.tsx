@@ -270,7 +270,7 @@ export default function MapView({ booths, stamps, onPick, onInfo }: Props) {
         </text>
 
         {legend.map((key, i) => (
-          <g key={key} transform={`translate(330 ${575 + i * 50})`}>
+          <g key={key} transform={`translate(345 ${575 + i * 50})`}>
             <rect
               width={28}
               height={28}
@@ -299,9 +299,9 @@ export default function MapView({ booths, stamps, onPick, onInfo }: Props) {
 
         {/* 스탬프 대상이 아닌 곳들 */}
         <Inert
-          x={466}
+          x={450}
           y={1140}
-          w={102}
+          w={105}
           h={126}
           label="주류 판매"
           fs={rowFs}
@@ -309,9 +309,9 @@ export default function MapView({ booths, stamps, onPick, onInfo }: Props) {
           onOpen={() => onInfo("liquor")}
         />
         <Inert
-          x={578}
+          x={562}
           y={1140}
-          w={86}
+          w={89}
           h={126}
           label="일화"
           fs={rowFs}
@@ -321,29 +321,29 @@ export default function MapView({ booths, stamps, onPick, onInfo }: Props) {
         />
 
         <rect
-          x={40}
+          x={20}
           y={1316}
-          width={290}
-          height={36}
+          width={270}
+          height={38}
           rx={6}
           fill="var(--surface-2)"
           stroke="var(--map-inert)"
           strokeWidth={2}
         />
-        <text x={185} y={1341} fontSize={24} textAnchor="middle" fill="var(--map-inert-ink)">
+        <text x={155} y={1343} fontSize={24} textAnchor="middle" fill="var(--map-inert-ink)">
           관람석
         </text>
         <rect
-          x={510}
+          x={520}
           y={1316}
-          width={190}
-          height={36}
+          width={128}
+          height={38}
           rx={6}
           fill="var(--surface-2)"
           stroke="var(--map-inert)"
           strokeWidth={2}
         />
-        <text x={605} y={1341} fontSize={24} textAnchor="middle" fill="var(--map-inert-ink)">
+        <text x={584} y={1343} fontSize={24} textAnchor="middle" fill="var(--map-inert-ink)">
           관람석
         </text>
 
@@ -361,11 +361,11 @@ export default function MapView({ booths, stamps, onPick, onInfo }: Props) {
             }
           }}
         >
-          <rect x={340} y={1292} width={160} height={84} rx={10} fill="var(--hq)" />
-          <text x={420} y={1328} fontSize={27} textAnchor="middle" fill="#FFFFFF">
+          <rect x={300} y={1288} width={210} height={94} rx={12} fill="var(--hq)" />
+          <text x={405} y={1326} fontSize={27} textAnchor="middle" fill="#FFFFFF">
             총학생회
           </text>
-          <text x={420} y={1358} fontSize={22} textAnchor="middle" fill="#EBDDF3">
+          <text x={405} y={1358} fontSize={22} textAnchor="middle" fill="#EBDDF3">
             굿즈 수령
           </text>
         </g>
