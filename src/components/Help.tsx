@@ -30,14 +30,14 @@ export default function Help({ config, onClose }: Props) {
         <div className="bd">
           <div>
             <h3>스탬프 투어</h3>
-            <div className="team">달빛제 부스를 돌면서 스탬프를 모으세요</div>
           </div>
 
           <div className="blk">
             <div className="k">참여 방법</div>
             <p>
               지도나 목록에서 부스를 선택해 소개와 미션을 확인하세요
-              <b> 미션 완료</b>시 스탬프 1개가 적립됩니다.
+              <br />
+              <b>미션 완료</b>시 스탬프 1개가 적립됩니다.
             </p>
           </div>
 
@@ -52,7 +52,7 @@ export default function Help({ config, onClose }: Props) {
                 <span className="n">13개</span>
                 <span className="d">
                   응모권 1장 + 굿즈
-                  <em>굿즈(타투 스티커)는 총학생회 본부에서 수령</em>
+                  <em>굿즈(타투 스티커)는 총학생회 본부에서 수령 가능합니다.</em>
                 </span>
               </div>
             </div>
@@ -75,7 +75,7 @@ export default function Help({ config, onClose }: Props) {
                 <span className="n">응모권</span>
                 <span className="d">
                   {dead} 마감
-                  <em>이후에 달성하면 응모권 없이 굿즈만 받습니다</em>
+                  <em>19시 이후 달성 시 굿즈만 받으실 수 있습니다.</em>
                 </span>
               </div>
               <div className="r">
