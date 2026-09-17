@@ -161,7 +161,7 @@ export async function fetchBooths(): Promise<Booth[]> {
 export async function fetchConfig(): Promise<EventConfig> {
   const { data, error } = await supabase
     .from("event_config")
-    .select("stamp_opens_at,stamp_closes_at,ticket_deadline")
+    .select("stamp_opens_at,stamp_closes_at,ticket_deadline,draw_at")
     .single();
   if (error) throw new Error(error.message);
   return data as EventConfig;

@@ -37,7 +37,7 @@ export default function Reward({ tier, serial, onClose }: Props) {
             <h3>{noSerial ? "굿즈 수령 대상입니다" : "응모권과 굿즈를 받았습니다"}</h3>
             {noSerial ? (
               <p>
-                응모권 발급은 19:30에 마감되어
+                응모권 발급은 19:00에 마감되어
                 <br />
                 굿즈만 받으실 수 있습니다.
               </p>

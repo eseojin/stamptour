@@ -250,12 +250,10 @@ export default function App() {
       {/* 럭키드로우 안내와 진행 막대를 한 덩어리로 묶는다 */}
       <div className="hero">
         <div className="herotop">
-          <span className="t serif">{hhmm(config.ticket_deadline)}</span>
-          <span className="lab">
-            럭키드로우 추첨 <span className="paren">(아티스트 공연 직전)</span>
-          </span>
+          <span className="t serif">{hhmm(config.draw_at)}</span>
+          <span className="lab">럭키드로우 추첨</span>
           <span className="left">
-            {untilDeadline ? <>마감까지 {untilDeadline}</> : "응모권 마감"}
+            {untilDeadline ? <>응모권 마감까지 {untilDeadline}</> : "응모권 마감"}
           </span>
         </div>
 

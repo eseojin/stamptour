@@ -11,6 +11,7 @@ export default function Help({ config, onClose }: Props) {
   const open = hhmm(config.stamp_opens_at);
   const close = hhmm(config.stamp_closes_at);
   const dead = hhmm(config.ticket_deadline);
+  const draw = hhmm(config.draw_at);
 
   return (
     <div className="ov">
@@ -62,13 +63,29 @@ export default function Help({ config, onClose }: Props) {
 
           <div className="blk">
             <div className="k">시간</div>
-            <p>
-              스탬프 적립 {open} ~ {close}.
-              <br />
-              응모권은 <b>{dead}까지</b> 달성한 경우에만 발급되고, 이후에는 굿즈만 받을 수 있습니다.
-              <br />
-              럭키드로우 추첨은 {dead}, 아티스트 공연 직전에 진행합니다.
-            </p>
+            {/* 응모권 마감과 추첨 시각이 다르므로 줄을 나눠 못박는다 */}
+            <div className="rw">
+              <div className="r">
+                <span className="n">적립</span>
+                <span className="d">
+                  {open} ~ {close}
+                </span>
+              </div>
+              <div className="r">
+                <span className="n">응모권</span>
+                <span className="d">
+                  {dead} 마감
+                  <em>이후에 달성하면 응모권 없이 굿즈만 받습니다</em>
+                </span>
+              </div>
+              <div className="r">
+                <span className="n">추첨</span>
+                <span className="d">
+                  {draw}
+                  <em>럭키드로우 · 아티스트 공연 직전</em>
+                </span>
+              </div>
+            </div>
           </div>
 
         </div>

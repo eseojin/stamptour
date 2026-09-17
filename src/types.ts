@@ -18,7 +18,10 @@ export interface Booth {
 export interface EventConfig {
   stamp_opens_at: string;
   stamp_closes_at: string;
+  /** 응모권 발급 마감 (19:00) */
   ticket_deadline: string;
+  /** 럭키드로우 추첨 (19:30) — 마감과 다르다 */
+  draw_at: string;
 }
 
 export interface Stamp {
@@ -28,7 +31,7 @@ export interface Stamp {
 
 export interface Ticket {
   tier: 7 | 13;
-  /** null = 19:30 이후 달성 → 응모권 없이 굿즈 자격만 */
+  /** null = 마감(19:00) 이후 달성 → 응모권 없이 굿즈 자격만 */
   serial: number | null;
   issued_at: string;
   goods_claimed_at: string | null;
@@ -90,7 +93,7 @@ export type AdminStats =
       last_serial: number;
       reached7: number;
       reached13: number;
-      /** 19:30 이후 달성이라 번호 없이 굿즈만 받는 건수 */
+      /** 마감(19:00) 이후 달성이라 번호 없이 굿즈만 받는 건수 */
       no_serial: number;
       goods_claimed: number;
       goods_pending: number;

@@ -89,7 +89,7 @@ function StatsPane() {
 
       {st.no_serial > 0 && (
         <p className="note">
-          {st.no_serial}명은 19:30 이후에 13회를 채워 응모권 번호 없이 굿즈만 받습니다.
+          {st.no_serial}명은 19:00 이후에 13회를 채워 응모권 번호 없이 굿즈만 받습니다.
           추첨 대상에는 들어가지 않습니다.
         </p>
       )}
@@ -235,7 +235,7 @@ function GoodsPane() {
           <div className="res ok">
             <b>{res.nickname}</b> 지급 완료
             <br />
-            {res.serial === null ? "19:30 이후 달성 — 응모권 없이 굿즈만" : `13회 응모권 ${res.serial}번`}
+            {res.serial === null ? "19:00 이후 달성 — 응모권 없이 굿즈만" : `13회 응모권 ${res.serial}번`}
           </div>
         ) : (
           <div className="res">

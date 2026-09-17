@@ -33,7 +33,7 @@ function TicketCard({ tier, ticket }: { tier: 7 | 13; ticket?: Ticket }) {
         <div className="tier">{label}</div>
         <div className="desc">
           {ticket.serial === null
-            ? "19:30 이후 달성 — 응모권 없이 굿즈 수령 대상"
+            ? "19:00 이후 달성 — 응모권 없이 굿즈 수령 대상"
             : `${hhmm(ticket.issued_at)} 발급`}
         </div>
         {tier === 13 && (

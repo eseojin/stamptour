@@ -10,11 +10,12 @@ create table event_config (
   id              int primary key default 1,
   stamp_opens_at  timestamptz not null,   -- 스탬프 적립 시작
   stamp_closes_at timestamptz not null,   -- 스탬프 적립 종료
-  ticket_deadline timestamptz not null,   -- 응모권 발급 마감 (럭키드로우 추첨 시각)
+  ticket_deadline timestamptz not null,   -- 응모권 발급 마감
+  draw_at         timestamptz,            -- 럭키드로우 추첨 (마감보다 늦다)
   constraint event_config_single_row check (id = 1)
 );
-insert into event_config (stamp_opens_at, stamp_closes_at, ticket_deadline) values
-  ('2026-09-18 15:00+09', '2026-09-18 22:00+09', '2026-09-18 19:30+09');
+insert into event_config (stamp_opens_at, stamp_closes_at, ticket_deadline, draw_at) values
+  ('2026-09-18 15:00+09', '2026-09-18 22:00+09', '2026-09-18 19:00+09', '2026-09-18 19:30+09');
 
 create table profiles (
   id          uuid primary key references auth.users(id) on delete cascade,
