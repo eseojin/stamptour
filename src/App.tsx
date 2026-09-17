@@ -192,7 +192,7 @@ export default function App() {
       const msg = e instanceof Error ? e.message : "";
       setScanFail(
         /rate limit|too many/i.test(msg)
-          ? "접속이 몰려 잠시 밀리고 있습니다. 5초쯤 뒤에 다시 눌러 주세요."
+          ? "접속이 몰려 잠시 밀리고 있습니다. 잠시 뒤 다시 눌러 주세요."
           : "통신이 불안정합니다. 잠시 뒤 다시 눌러 주세요."
       );
     }

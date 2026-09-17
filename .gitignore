@@ -12,3 +12,4 @@ seed_booths.sql
 
 # 로컬 QA 산출물 (QR 토큰 포함 가능)
 qa/
+Claude outputs/

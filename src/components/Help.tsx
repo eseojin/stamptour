@@ -36,10 +36,8 @@ export default function Help({ config, boothCount, onClose }: Props) {
           <div className="blk">
             <div className="k">참여 방법</div>
             <p>
-              지도나 목록에서 부스를 선택해 소개와 미션을 확인
-              <b> 미션 완료</b>를 눌러 그 부스의 QR을 찍으면 스탬프 1개 적립.
-              다른 부스의 QR은 인식 안됨
-              전체 {boothCount}개 부스 중 한 부스당 스탬프는 1개씩 적립.
+              지도나 목록에서 부스를 선택해 소개와 미션을 확인하세요
+              <b> 미션 완료</b>시 스탬프 1개가 적립됩니다.
             </p>
           </div>
 
@@ -59,7 +57,7 @@ export default function Help({ config, boothCount, onClose }: Props) {
               </div>
             </div>
             <p style={{ marginTop: 10 }}>
-              누적 스탬프 7개, 13개 받으면 응모권 한장씩, 1인당 응모권은 최대 2장입니다.
+              누적 스탬프 7개, 13개 적립 시 응모권 한장씩, 1인당 응모권은 최대 2장입니다.
             </p>
           </div>
 
@@ -68,18 +66,12 @@ export default function Help({ config, boothCount, onClose }: Props) {
             <p>
               스탬프 적립 {open} ~ {close}.
               <br />
-              응모권은 <b>{dead}까지</b> 달성한 경우에만 발급되고, 이후에는 굿즈만 받을수있음.
+              응모권은 <b>{dead}까지</b> 달성한 경우에만 발급되고, 이후에는 굿즈만 받을 수 있습니다.
               <br />
               럭키드로우 추첨은 {dead}, 아티스트 공연 직전에 진행합니다.
             </p>
           </div>
 
-          <div className="blk">
-            <div className="k">참고</div>
-            <p>
-              ..
-            </p>
-          </div>
         </div>
 
         <div className="ft">
